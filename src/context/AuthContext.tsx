@@ -3,13 +3,22 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchApi } from '../lib/api';
 
-type UserProfile = {
-  id: number;
-  type: 'freelancer' | 'employer';
-  title: string;
+export type UserProfile = {
+  id?: number;
+  user_id?: number;
+  profile_id?: number;
+  type?: 'freelancer' | 'employer';
+  profile_type?: 'freelancer' | 'employer';
+  title?: string;
+  name?: string;
   tagline?: string;
+  avatar?: string;
   avatar_url?: string;
   wallet_balance?: number;
+  credits?: number;
+  email?: string;
+  email_verified?: boolean;
+  can_switch_role?: boolean;
 };
 
 type AuthContextType = {
@@ -40,10 +49,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfileData = async (activeToken: string) => {
     try {
-      const data = await fetchApi('/profiles/me', {
+      const data = await fetchApi('/auth/me', {
         headers: { Authorization: `Bearer ${activeToken}` },
       });
-      setProfile(data);
+      const userData = data?.user || data;
+      setProfile({
+        ...userData,
+        name: userData?.name || userData?.title || 'User',
+        type: userData?.type || userData?.profile_type || 'freelancer',
+        avatar: userData?.avatar || userData?.avatar_url || '',
+      });
     } catch (error) {
       console.error('Failed to fetch profile', error);
       // If token is invalid, log out automatically
