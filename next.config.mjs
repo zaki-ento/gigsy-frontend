@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost/gigneo/wp-json/gn/v1/:path*', // Proxy to Backend
+        destination: 'http://localhost/gigsy/wp-json/gn/v1/:path*',
       },
     ];
   },
