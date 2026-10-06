@@ -24,11 +24,19 @@ export default function DashboardOverview() {
       .finally(() => setLoading(false));
   }, []);
 
+  const dash = stats?.dashboard || stats || {};
+  const amount = (value: any) => {
+    if (value == null) return '0';
+    if (typeof value === 'number' || typeof value === 'string') return value;
+    if (typeof value === 'object') return value.lifetime ?? value.all ?? value.last_30 ?? 0;
+    return '0';
+  };
+  const listingCount = amount(dash?.counts?.services) || amount(dash?.counts?.jobs) || 0;
   const statCards = [
-    { label: 'Total Earnings', value: stats?.earnings || '$0.00', icon: CurrencyDollarIcon, color: 'var(--accent-blue)' },
-    { label: 'Active Orders', value: stats?.active_orders || '0', icon: ShoppingBagIcon, color: 'var(--accent-teal)' },
-    { label: 'Proposals', value: stats?.active_proposals || '0', icon: BriefcaseIcon, color: 'var(--accent-pink)' },
-    { label: 'Profile Views', value: stats?.profile_views || '0', icon: ChartBarIcon, color: 'var(--accent-purple)' },
+    { label: 'Wallet Balance', value: amount(dash?.stats?.wallet_balance), icon: CurrencyDollarIcon, color: 'var(--accent-blue)' },
+    { label: 'Active Orders', value: amount(dash?.stats?.active_orders_count), icon: ShoppingBagIcon, color: 'var(--accent-teal)' },
+    { label: 'Listings', value: listingCount, icon: BriefcaseIcon, color: 'var(--accent-pink)' },
+    { label: 'Unread', value: amount(dash?.unread?.notifications), icon: ChartBarIcon, color: 'var(--accent-purple)' },
   ];
 
   return (
@@ -71,10 +79,20 @@ export default function DashboardOverview() {
                   </div>
                 </div>
               ))
-            ) : (
+            ) : (dash?.recent_orders || []).length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-[var(--text-muted)] text-sm">No recent activity to show.</p>
               </div>
+            ) : (
+              (dash.recent_orders as any[]).slice(0, 5).map((order) => (
+                <div key={order.id} className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{order.job_service_title || order.service?.title || `Order #${order.id}`}</p>
+                    <p className="text-xs capitalize" style={{ color: 'var(--text-muted)' }}>{order.status}</p>
+                  </div>
+                  <span className="text-sm font-semibold">{order.total_html || order.total || ''}</span>
+                </div>
+              ))
             )}
           </div>
         </motion.div>

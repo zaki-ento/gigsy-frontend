@@ -138,12 +138,16 @@ function FreelancerCard({ f, idx }: { f: any; idx: number }) {
 export default function HomePage() {
   const [services, setServices] = useState<any[]>([]);
   const [freelancers, setFreelancers] = useState<any[]>([]);
+  const [categories, setCategories] = useState<{ name: string; id: number }[]>([]);
   const [loadingServices, setLoadingServices] = useState(true);
   const [loadingFreelancers, setLoadingFreelancers] = useState(true);
 
   useEffect(() => {
     fetchApi('/services').then((r) => { if (r.items) setServices(r.items.slice(0, 8)); }).finally(() => setLoadingServices(false));
     fetchApi('/freelancers').then((r) => { if (r.items) setFreelancers(r.items.slice(0, 6)); }).finally(() => setLoadingFreelancers(false));
+    fetchApi('/taxonomy/gigneo_facet?parent=0&per_page=8')
+      .then((r) => { if (r.items) setCategories(r.items.slice(0, 8)); })
+      .catch(() => undefined);
   }, []);
 
   return (
@@ -305,16 +309,12 @@ export default function HomePage() {
             <h2 className="text-4xl md:text-5xl font-black text-white">Everything your<br /><span className="gradient-text-pink">business needs</span></h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[
-              { label: 'Web Design & Dev', icon: '💻', href: '/services', color: 'from-blue-600/20 to-purple-600/10' },
-              { label: 'UI/UX Design', icon: '🎨', href: '/services', color: 'from-pink-600/20 to-red-600/10' },
-              { label: 'Mobile Apps', icon: '📱', href: '/services', color: 'from-green-600/20 to-teal-600/10' },
-              { label: 'Marketing & SEO', icon: '📈', href: '/services', color: 'from-orange-600/20 to-yellow-600/10' },
-              { label: 'Video & Animation', icon: '🎬', href: '/services', color: 'from-red-600/20 to-pink-600/10' },
-              { label: 'Writing & Copy', icon: '✍️', href: '/services', color: 'from-indigo-600/20 to-blue-600/10' },
-              { label: 'Data & Analytics', icon: '📊', href: '/services', color: 'from-cyan-600/20 to-blue-600/10' },
-              { label: 'AI & Automation', icon: '🤖', href: '/services', color: 'from-violet-600/20 to-purple-600/10' },
-            ].map((cat, i) => (
+            {(categories.length ? categories.map((c) => ({ label: c.name, href: `/services?category=${c.id}` })) : [
+              { label: 'Design', href: '/services' },
+              { label: 'Development', href: '/services' },
+              { label: 'Marketing', href: '/services' },
+              { label: 'Writing', href: '/services' },
+            ]).map((cat, i) => (
               <motion.div
                 key={cat.label}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -324,10 +324,9 @@ export default function HomePage() {
               >
                 <Link
                   href={cat.href}
-                  className={`glass-card rounded-2xl p-5 flex flex-col gap-3 group bg-gradient-to-br ${cat.color}`}
+                  className="glass-card rounded-2xl p-5 flex flex-col gap-3 group"
                 >
-                  <span className="text-3xl">{cat.icon}</span>
-                  <span className="text-sm font-semibold text-white group-hover:gradient-text-blue transition-colors">{cat.label}</span>
+                  <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{cat.label}</span>
                 </Link>
               </motion.div>
             ))}

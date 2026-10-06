@@ -167,13 +167,13 @@ export default function LoginPage() {
 
             {/* Forgot Password */}
             <div className="text-right">
-              <a
-                href="#"
-                className="text-sm font-medium transition-colors hover:text-white"
+              <Link
+                href="/forgot-password"
+                className="text-sm font-medium transition-colors"
                 style={{ color: 'var(--accent-blue)' }}
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
             {/* Submit */}

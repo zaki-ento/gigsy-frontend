@@ -17,7 +17,7 @@ const footerLinks = {
     { label: 'Blog', href: '#' },
   ],
   'Support': [
-    { label: 'Help Center', href: '#' },
+    { label: 'Help Center', href: '/dashboard/support' },
     { label: 'Contact Us', href: '#' },
     { label: 'Privacy Policy', href: '#' },
     { label: 'Terms of Service', href: '#' },
@@ -54,7 +54,7 @@ export default function Footer() {
           {/* Link Groups */}
           {Object.entries(footerLinks).map(([group, links]) => (
             <div key={group}>
-              <h4 className="text-sm font-semibold text-white mb-5 tracking-wider uppercase">{group}</h4>
+              <h4 className="text-sm font-semibold mb-5 tracking-wider uppercase" style={{ color: 'var(--text-primary)' }}>{group}</h4>
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>

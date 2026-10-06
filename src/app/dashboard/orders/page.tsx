@@ -67,8 +67,8 @@ export default function OrdersPage() {
                         {order.status || 'Pending'}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-white mb-1 group-hover:text-blue-300 transition-colors">
-                      {order.item_name || 'Service Order'}
+                      <h3 className="font-semibold mb-1 group-hover:text-blue-300 transition-colors" style={{ color: 'var(--text-primary)' }}>
+                      {order.service?.title || order.job?.title || order.item_name || 'Order'}
                     </h3>
                     <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
                       <span>Ordered on {new Date(order.created_at).toLocaleDateString()}</span>
@@ -79,11 +79,11 @@ export default function OrdersPage() {
                   <div className="flex items-center justify-between md:justify-end gap-6 md:w-64 shrink-0">
                     <div className="text-right">
                       <div className="text-xs text-[var(--text-muted)] mb-1">Total</div>
-                      <div className="font-bold text-white" dangerouslySetInnerHTML={{ __html: order.total_price_html || '$0' }} />
+                      <div className="font-bold" style={{ color: 'var(--text-primary)' }} dangerouslySetInnerHTML={{ __html: order.total_html || order.total_price_html || '$0' }} />
                     </div>
-                    <button className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/10 group-hover:border-blue-500/30">
-                      <ArrowRightIcon className="w-4 h-4 text-white" />
-                    </button>
+                    <Link href={`/dashboard/orders/${order.id}`} className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/10">
+                      <ArrowRightIcon className="w-4 h-4" style={{ color: 'var(--text-primary)' }} />
+                    </Link>
                   </div>
                 </motion.div>
               ))}

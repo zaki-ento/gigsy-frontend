@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchApi } from '@/lib/api';
 import {
@@ -30,6 +30,28 @@ export default function SettingsPage() {
     newPassword: '',
     confirmPassword: '',
   });
+  const [noticePrefs, setNoticePrefs] = useState<Record<string, boolean>>({});
+  const deactivateReason = 'other';
+  const [deactivateDetail, setDeactivateDetail] = useState('');
+
+  useEffect(() => {
+    if (activeTab !== 'notifications') return;
+    fetchApi('/account/notifications')
+      .then((r) => setNoticePrefs(r.notifications || {}))
+      .catch(() => undefined);
+  }, [activeTab]);
+
+  const toggleNotice = async (type: string, enabled: boolean) => {
+    setNoticePrefs((prev) => ({ ...prev, [type]: enabled }));
+    try {
+      await fetchApi('/account/notifications', {
+        method: 'POST',
+        body: JSON.stringify({ type, value: enabled ? 'yes' : 'no' }),
+      });
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'Could not update notifications.' });
+    }
+  };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,10 +84,11 @@ export default function SettingsPage() {
     setIsLoading(true);
     setMessage({ type: '', text: '' });
     try {
-      await fetchApi('/account/password', {
+      await fetchApi('/auth/change-password', {
         method: 'POST',
         body: JSON.stringify({
-          password: passwordData.newPassword,
+          current_password: passwordData.currentPassword,
+          new_password: passwordData.newPassword,
         }),
       });
       setMessage({ type: 'success', text: 'Password updated successfully!' });
@@ -251,6 +274,30 @@ export default function SettingsPage() {
                 </div>
               </form>
 
+              <div className="mt-10 flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-bold" style={{ color: 'var(--text-primary)' }}>Switch role</h3>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Move between freelancer and employer on this account.</p>
+                </div>
+                <button
+                  type="button"
+                  className="btn-glass px-5 py-2.5 rounded-xl text-sm font-semibold"
+                  onClick={async () => {
+                    try {
+                      const res = await fetchApi('/account/switch-role', { method: 'POST' });
+                      if (res.token) {
+                        localStorage.setItem('gigneo_jwt_token', res.token);
+                        window.location.href = '/dashboard';
+                      }
+                    } catch (err: any) {
+                      setMessage({ type: 'error', text: err.message || 'Could not switch role.' });
+                    }
+                  }}
+                >
+                  Switch
+                </button>
+              </div>
+
               <div className="mt-12 pt-8 border-t border-white/5">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <ShieldCheckIcon className="w-5 h-5 text-red-400" /> Danger Zone
@@ -260,9 +307,30 @@ export default function SettingsPage() {
                     <h4 className="font-bold text-red-400 mb-1">Delete Account</h4>
                     <p className="text-sm text-red-400/80">Once you delete your account, there is no going back. Please be certain.</p>
                   </div>
-                  <button className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors">
-                    Delete
-                  </button>
+                  <form
+                    className="flex flex-col items-end gap-2"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!deactivateDetail.trim()) {
+                        setMessage({ type: 'error', text: 'Please describe why you are deactivating.' });
+                        return;
+                      }
+                      try {
+                        await fetchApi('/account/deactivate', {
+                          method: 'POST',
+                          body: JSON.stringify({ deactivation_reason: deactivateReason, deactivation_detail: deactivateDetail }),
+                        });
+                        logout();
+                      } catch (err: any) {
+                        setMessage({ type: 'error', text: err.message || 'Could not deactivate account.' });
+                      }
+                    }}
+                  >
+                    <input className="input-dark px-3 py-2 rounded-xl text-sm" placeholder="Tell us why" value={deactivateDetail} onChange={(e) => setDeactivateDetail(e.target.value)} />
+                    <button type="submit" className="px-6 py-2 bg-red-500 hover:bg-red-600 font-bold rounded-xl transition-colors">
+                      Deactivate
+                    </button>
+                  </form>
                 </div>
               </div>
             </motion.div>
@@ -273,22 +341,21 @@ export default function SettingsPage() {
               <h2 className="text-xl font-bold text-white mb-2">Notification Preferences</h2>
               <p className="text-[var(--text-secondary)] text-sm mb-8">Choose what you want to be notified about.</p>
 
-              <div className="space-y-6 max-w-2xl">
-                {[
-                  { title: 'Messages', desc: 'Receive notifications when someone sends you a message.' },
-                  { title: 'Order Updates', desc: 'Get updates on your active orders and deliveries.' },
-                  { title: 'Proposals', desc: 'Receive alerts for new proposals and responses.' },
-                  { title: 'Marketing', desc: 'Receive promotional emails, offers, and newsletters.' },
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start justify-between py-4 border-b border-white/5">
-                    <div>
-                      <h4 className="font-semibold text-white mb-1">{item.title}</h4>
-                      <p className="text-sm text-[var(--text-secondary)]">{item.desc}</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" defaultChecked className="sr-only peer" />
-                      <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent-blue)]"></div>
-                    </label>
+              <div className="space-y-2 max-w-2xl">
+                {Object.keys(noticePrefs).length === 0 && (
+                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Loading preferences…</p>
+                )}
+                {Object.entries(noticePrefs).map(([type, enabled]) => (
+                  <div key={type} className="flex items-center justify-between py-4 border-b border-white/5">
+                    <h4 className="font-semibold capitalize" style={{ color: 'var(--text-primary)' }}>{type}</h4>
+                    <button
+                      type="button"
+                      onClick={() => toggleNotice(type, !enabled)}
+                      className="w-11 h-6 rounded-full relative transition-colors"
+                      style={{ background: enabled ? 'var(--accent-blue)' : 'rgba(29,29,31,0.15)' }}
+                    >
+                      <span className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all" style={{ left: enabled ? 22 : 2 }} />
+                    </button>
                   </div>
                 ))}
               </div>

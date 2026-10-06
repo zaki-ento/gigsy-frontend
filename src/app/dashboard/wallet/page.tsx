@@ -3,13 +3,19 @@
 import { useEffect, useState } from 'react';
 import { fetchApi } from '@/lib/api';
 import { motion } from 'framer-motion';
-import { CurrencyDollarIcon, ArrowUpRightIcon, ArrowDownRightIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { CurrencyDollarIcon, ArrowDownRightIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 
 export default function WalletPage() {
   const [wallet, setWallet] = useState<any>(null);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [payouts, setPayouts] = useState<any[]>([]);
+  const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [depositAmount, setDepositAmount] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [payoutId, setPayoutId] = useState('');
   const [depositing, setDepositing] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);
 
   useEffect(() => {
     fetchWallet();
@@ -19,7 +25,17 @@ export default function WalletPage() {
     setLoading(true);
     try {
       const res = await fetchApi('/wallet');
-      setWallet(res);
+      setWallet(res.wallet || res);
+      const [invoiceRes, payoutRes, withdrawalRes] = await Promise.all([
+        fetchApi('/wallet/invoices').catch(() => ({ items: [] })),
+        fetchApi('/wallet/payouts').catch(() => ({ payouts: [] })),
+        fetchApi('/wallet/withdrawals').catch(() => ({ items: [] })),
+      ]);
+      setInvoices(invoiceRes.items || []);
+      setPayouts(payoutRes.payouts || []);
+      setWithdrawals(withdrawalRes.items || []);
+      const firstPayout = (payoutRes.payouts || [])[0];
+      if (firstPayout?.id) setPayoutId(String(firstPayout.id));
     } catch (e) {
       console.error(e);
     } finally {
@@ -31,11 +47,14 @@ export default function WalletPage() {
     if (!depositAmount || Number(depositAmount) <= 0) return;
     setDepositing(true);
     try {
-      await fetchApi('/wallet/deposit', {
+      const res = await fetchApi('/wallet/deposit', {
         method: 'POST',
         body: JSON.stringify({ amount: Number(depositAmount) })
       });
-      alert('Deposit initiated successfully');
+      if (res.redirect) {
+        window.location.href = res.redirect;
+        return;
+      }
       setDepositAmount('');
       fetchWallet();
     } catch (e: any) {
@@ -54,19 +73,39 @@ export default function WalletPage() {
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Balance Card */}
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-2 glass-card rounded-3xl p-8 relative overflow-hidden bg-gradient-to-br from-blue-900/40 to-purple-900/40 border-blue-500/30">
-          <div className="orb-pink w-64 h-64 absolute -bottom-32 -right-32 opacity-40" />
-          <h2 className="text-sm font-medium text-blue-200 mb-2 uppercase tracking-wider">Available Balance</h2>
-          <div className="text-5xl font-black text-white mb-8">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-2 glass-card rounded-3xl p-8 relative overflow-hidden">
+          <div className="orb-blue w-64 h-64 absolute -bottom-32 -right-32 opacity-50" />
+          <h2 className="text-sm font-medium mb-2 uppercase tracking-wider" style={{ color: 'var(--accent-blue)' }}>Available Balance</h2>
+          <div className="text-5xl font-black mb-3" style={{ color: 'var(--text-primary)' }}>
             {loading ? <div className="skeleton w-48 h-12 rounded" /> : <span dangerouslySetInnerHTML={{ __html: wallet?.balance_html || '$0.00' }} />}
           </div>
-          
-          <div className="flex gap-4">
-            <button className="btn-primary px-6 py-3 rounded-xl text-sm font-bold flex items-center gap-2">
-              <ArrowDownRightIcon className="w-5 h-5" /> Withdraw Funds
-            </button>
-            <button className="px-6 py-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-all text-white border border-white/20">
-              <ArrowUpRightIcon className="w-5 h-5" /> Transfer
+          <p className="text-sm mb-8" style={{ color: 'var(--text-secondary)' }}>{wallet?.credits ?? 0} credits available</p>
+
+          <div className="flex flex-col sm:flex-row gap-3 max-w-md">
+            <input className="input-dark flex-1 px-4 py-3 rounded-xl text-sm" placeholder="Withdraw amount" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} />
+            <select className="input-dark px-4 py-3 rounded-xl text-sm" value={payoutId} onChange={(e) => setPayoutId(e.target.value)}>
+              <option value="">Payout method</option>
+              {payouts.map((p) => (
+                <option key={p.id} value={p.id}>{p.title || p.type || p.id}</option>
+              ))}
+            </select>
+            <button
+              disabled={withdrawing || !withdrawAmount || !payoutId}
+              onClick={async () => {
+                setWithdrawing(true);
+                try {
+                  await fetchApi('/wallet/withdrawals', { method: 'POST', body: JSON.stringify({ amount: Number(withdrawAmount), payout_id: payoutId }) });
+                  setWithdrawAmount('');
+                  fetchWallet();
+                } catch (e: any) {
+                  alert(e.message || 'Withdrawal failed');
+                } finally {
+                  setWithdrawing(false);
+                }
+              }}
+              className="btn-primary px-5 py-3 rounded-xl text-sm font-bold flex items-center gap-2 disabled:opacity-50"
+            >
+              <ArrowDownRightIcon className="w-5 h-5" /> {withdrawing ? 'Sending…' : 'Withdraw'}
             </button>
           </div>
         </motion.div>
@@ -103,10 +142,33 @@ export default function WalletPage() {
           <h2 className="text-lg font-bold text-white">Recent Transactions</h2>
           <button className="text-sm text-[var(--accent-blue)] hover:text-blue-300 font-medium">View All</button>
         </div>
-        <div className="p-6 text-center py-12">
-           <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
-           <p className="text-[var(--text-secondary)] text-sm">No transactions found.</p>
-        </div>
+        {invoices.length === 0 && withdrawals.length === 0 ? (
+          <div className="p-6 text-center py-12">
+            <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
+            <p className="text-[var(--text-secondary)] text-sm">No transactions found.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            {invoices.map((item) => (
+              <div key={`inv-${item.id}`} className="px-6 py-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{item.title || `Invoice #${item.id}`}</p>
+                  <p className="text-xs capitalize" style={{ color: 'var(--text-muted)' }}>{item.status} · {item.type}</p>
+                </div>
+                <span className="text-sm font-bold" dangerouslySetInnerHTML={{ __html: item.total_html || '' }} />
+              </div>
+            ))}
+            {withdrawals.map((item) => (
+              <div key={`wd-${item.id}`} className="px-6 py-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Withdrawal #{item.id}</p>
+                  <p className="text-xs capitalize" style={{ color: 'var(--text-muted)' }}>{item.status}</p>
+                </div>
+                <span className="text-sm font-bold" dangerouslySetInnerHTML={{ __html: item.total_html || '' }} />
+              </div>
+            ))}
+          </div>
+        )}
       </motion.div>
     </div>
   );

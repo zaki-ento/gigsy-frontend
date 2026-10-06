@@ -12,6 +12,9 @@ import {
   ChatBubbleLeftRightIcon,
   BellIcon,
   Cog6ToothIcon,
+  BookmarkIcon,
+  LifebuoyIcon,
+  RectangleGroupIcon,
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 
@@ -36,9 +39,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: 'Overview', href: '/dashboard', icon: RectangleStackIcon },
     { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBagIcon },
     { name: 'Proposals', href: '/dashboard/proposals', icon: BriefcaseIcon },
+    { name: 'My Listings', href: '/dashboard/listings', icon: RectangleGroupIcon },
+    { name: 'Saved', href: '/dashboard/saved', icon: BookmarkIcon },
     { name: 'Wallet', href: '/dashboard/wallet', icon: WalletIcon },
     { name: 'Messages', href: '/dashboard/chat', icon: ChatBubbleLeftRightIcon },
     { name: 'Notifications', href: '/dashboard/notifications', icon: BellIcon },
+    { name: 'Support', href: '/dashboard/support', icon: LifebuoyIcon },
     { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
   ];
 
@@ -68,7 +74,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
               <nav className="space-y-1.5">
                 {navItems.map((item) => {
-                  const isActive = pathname === item.href;
+                  const isActive = item.href === '/dashboard' ? pathname === item.href : pathname === item.href || pathname.startsWith(item.href + '/');
                   return (
                     <Link
                       key={item.name}

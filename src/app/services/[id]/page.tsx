@@ -24,6 +24,7 @@ export default function SingleService() {
   const [service, setService] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOrdering, setIsOrdering] = useState(false);
+  const [savedNote, setSavedNote] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('one');
 
   useEffect(() => {
@@ -189,6 +190,21 @@ export default function SingleService() {
                 </div>
 
                 <div className="p-6">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!token) { router.push('/login'); return; }
+                      try {
+                        const res = await fetchApi('/saved', { method: 'POST', body: JSON.stringify({ id: Number(id) }) });
+                        setSavedNote(res.message || 'Saved');
+                      } catch (err: any) {
+                        setSavedNote(err.message || 'Could not save');
+                      }
+                    }}
+                    className="btn-glass w-full py-3 rounded-2xl text-sm font-semibold mb-3"
+                  >
+                    {savedNote || 'Save service'}
+                  </button>
                   <button
                     onClick={handleOrder}
                     disabled={isOrdering || profile?.type === 'freelancer'}

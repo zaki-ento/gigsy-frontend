@@ -76,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    fetchApi('/auth/logout', { method: 'POST' }).catch(() => undefined);
     localStorage.removeItem('gigneo_jwt_token');
     setToken(null);
     setProfile(null);

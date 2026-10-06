@@ -22,7 +22,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetchApi('/messages')
+    fetchApi('/chats')
       .then((r) => {
         const convs = r.items || r.conversations || [];
         setConversations(convs);
@@ -38,8 +38,9 @@ export default function ChatPage() {
     setSelectedConv(conv);
     setMessages([]);
     try {
-      const r = await fetchApi(`/messages/${conv.id || conv.profile_id}`);
-      setMessages(r.items || r.messages || []);
+      const r = await fetchApi(`/chats/${conv.id || conv.profile_id}/messages`);
+      const payload = r.items || {};
+      setMessages(payload.messages || r.messages || (Array.isArray(r.items) ? r.items : []));
     } catch (e) {
       console.error(e);
     }
@@ -65,15 +66,14 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, tempMsg]);
 
     try {
-      await fetchApi('/messages', {
+      const memberId = selectedConv.id || selectedConv.profile_id;
+      await fetchApi(`/chats/${memberId}/messages`, {
         method: 'POST',
-        body: JSON.stringify({
-          receiver_id: selectedConv.id || selectedConv.profile_id,
-          message: text,
-        }),
+        body: JSON.stringify({ message: text }),
       });
-      const updated = await fetchApi(`/messages/${selectedConv.id || selectedConv.profile_id}`);
-      setMessages(updated.items || updated.messages || []);
+      const updated = await fetchApi(`/chats/${memberId}/messages`);
+      const payload = updated.items || {};
+      setMessages(payload.messages || updated.messages || []);
     } catch (e) {
       console.error(e);
     } finally {
@@ -150,7 +150,7 @@ export default function ChatPage() {
                         {conv.name?.charAt(0) || '?'}
                       </div>
                     )}
-                    {conv.online && (
+                    {(conv.is_online || conv.online) && (
                       <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-[var(--bg-card)]" />
                     )}
                   </div>
@@ -160,9 +160,9 @@ export default function ChatPage() {
                       {conv.last_message || 'Start a conversation'}
                     </p>
                   </div>
-                  {conv.unread > 0 && (
-                    <span className="text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full text-white" style={{ background: 'var(--accent-blue)' }}>
-                      {conv.unread}
+                  {(conv.unread_count || conv.unread) > 0 && (
+                    <span className="text-on-fill text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full" style={{ background: 'var(--accent-blue)' }}>
+                      {conv.unread_count || conv.unread}
                     </span>
                   )}
                 </button>
@@ -185,8 +185,8 @@ export default function ChatPage() {
               )}
               <div>
                 <p className="font-bold text-white text-sm">{selectedConv.name || 'User'}</p>
-                <p className="text-xs" style={{ color: selectedConv.online ? '#4ade80' : 'var(--text-muted)' }}>
-                  {selectedConv.online ? 'Online' : 'Offline'}
+                <p className="text-xs" style={{ color: (selectedConv.is_online || selectedConv.online) ? '#1a7f37' : 'var(--text-muted)' }}>
+                  {(selectedConv.is_online || selectedConv.online) ? 'Online' : 'Offline'}
                 </p>
               </div>
             </div>
@@ -195,7 +195,8 @@ export default function ChatPage() {
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               <AnimatePresence>
                 {messages.map((msg, idx) => {
-                  const isOwn = msg.sender_id === profile?.profile_id || msg.sender_id === profile?.id;
+                  const mine = profile?.profile_id || profile?.id;
+                  const isOwn = Number(msg.sender_id) === Number(mine);
                   return (
                     <motion.div
                       key={msg.id || idx}
@@ -206,7 +207,7 @@ export default function ChatPage() {
                       <div
                         className="max-w-xs lg:max-w-sm px-4 py-3 rounded-2xl text-sm"
                         style={{
-                          background: isOwn ? 'linear-gradient(135deg, #4f6ef7, #9747ff)' : 'var(--bg-card-hover)',
+                          background: isOwn ? 'linear-gradient(180deg, #4da3ff, #0071e3)' : 'rgba(255,255,255,0.8)',
                           color: isOwn ? 'white' : 'var(--text-primary)',
                           border: isOwn ? 'none' : '1px solid var(--border)',
                           opacity: msg._sending ? 0.7 : 1,
@@ -217,8 +218,8 @@ export default function ChatPage() {
                           className="text-xs mt-1 opacity-60"
                           style={{ textAlign: isOwn ? 'right' : 'left' }}
                         >
-                          {msg.created_at
-                            ? new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                          {(msg.sent_at || msg.created_at)
+                            ? new Date(msg.sent_at || msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
                             : '...'}
                         </p>
                       </div>

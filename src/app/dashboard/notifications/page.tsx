@@ -28,8 +28,11 @@ export default function NotificationsPage() {
 
   const markAllRead = async () => {
     try {
-      await fetchApi('/notifications/read-all', { method: 'POST' });
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      await fetchApi('/notifications/mark', {
+        method: 'POST',
+        body: JSON.stringify({ status: 'read', mark_all: true }),
+      });
+      setNotifications((prev) => prev.map((n) => ({ ...n, status: 'read', read: true })));
     } catch (e) {
       console.error(e);
     }
@@ -59,7 +62,8 @@ export default function NotificationsPage() {
     }
   };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const isUnread = (n: any) => n.status ? n.status !== 'read' : !n.read;
+  const unreadCount = notifications.filter(isUnread).length;
 
   return (
     <div className="space-y-8">
@@ -114,7 +118,7 @@ export default function NotificationsPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.04 }}
                     className={`flex items-start gap-4 p-5 transition-colors hover:bg-white/5 ${
-                      !notif.read ? 'bg-white/[0.02]' : ''
+                      isUnread(notif) ? 'bg-[var(--glow-blue)]' : ''
                     }`}
                   >
                     <div
@@ -124,9 +128,12 @@ export default function NotificationsPage() {
                       <Icon className={`w-5 h-5 ${getNotifColor(notif.type)}`} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${notif.read ? 'text-[var(--text-secondary)]' : 'text-white font-medium'}`}>
-                        {notif.message || notif.content || 'Notification'}
+                      <p className={`text-sm ${isUnread(notif) ? 'font-semibold' : ''}`} style={{ color: isUnread(notif) ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                        {notif.title || notif.message || notif.content || 'Notification'}
                       </p>
+                      {notif.title && notif.content && (
+                        <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{notif.content}</p>
+                      )}
                       <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                         {notif.created_at
                           ? new Date(notif.created_at).toLocaleDateString('en-US', {
@@ -135,7 +142,7 @@ export default function NotificationsPage() {
                           : 'Just now'}
                       </p>
                     </div>
-                    {!notif.read && (
+                    {isUnread(notif) && (
                       <div className="w-2 h-2 rounded-full mt-2 shrink-0" style={{ background: 'var(--accent-blue)' }} />
                     )}
                   </motion.div>
