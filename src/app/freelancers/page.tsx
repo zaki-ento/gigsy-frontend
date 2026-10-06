@@ -39,7 +39,7 @@ export default function FreelancersFeed() {
               <UserGroupIcon className="w-4 h-4" />
               Talent Directory
             </div>
-            <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-black text-black mb-4 leading-tight">
               Hire <span className="gradient-text-blue">Elite Talent</span>
             </h1>
             <p className="text-lg max-w-xl mb-10" style={{ color: 'var(--text-secondary)' }}>
@@ -77,7 +77,7 @@ export default function FreelancersFeed() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-32">
             <UserGroupIcon className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
-            <h3 className="text-xl font-bold text-white mb-2">No freelancers found</h3>
+            <h3 className="text-xl font-bold text-black mb-2">No freelancers found</h3>
             <p style={{ color: 'var(--text-secondary)' }}>Try a different search.</p>
           </div>
         ) : (
@@ -106,7 +106,7 @@ export default function FreelancersFeed() {
                           {f.avatar ? (
                             <img src={f.avatar} alt={f.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-2xl font-black text-white" style={{ background: 'var(--bg-card-hover)' }}>
+                            <div className="w-full h-full flex items-center justify-center text-2xl font-black text-black" style={{ background: 'var(--bg-card-hover)' }}>
                               {f.name?.charAt(0)}
                             </div>
                           )}
@@ -121,7 +121,7 @@ export default function FreelancersFeed() {
                         )}
                       </div>
 
-                      <h3 className="font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">{f.name}</h3>
+                      <h3 className="font-bold text-black mb-1 group-hover:text-blue-300 transition-colors">{f.name}</h3>
                       <p className="text-sm mb-3 line-clamp-1" style={{ color: 'var(--accent-blue)' }}>{f.tagline || 'Expert Professional'}</p>
 
                       {f.location?.country_state_name && (
@@ -137,7 +137,7 @@ export default function FreelancersFeed() {
                           <span className="text-xs font-bold text-yellow-400">{Number(f.rating?.average || 0).toFixed(1)}</span>
                           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>({f.rating?.count})</span>
                         </div>
-                        <span className="text-xs font-semibold px-3 py-1 rounded-lg transition-all group-hover:text-white"
+                        <span className="text-xs font-semibold px-3 py-1 rounded-lg transition-all group-hover:text-black"
                           style={{ background: 'var(--bg-card-hover)', color: 'var(--text-secondary)' }}>
                           View Profile
                         </span>

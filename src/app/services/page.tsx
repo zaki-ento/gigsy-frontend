@@ -50,7 +50,7 @@ export default function ServicesFeed() {
               <SparklesIcon className="w-4 h-4" />
               Marketplace
             </div>
-            <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-black text-black mb-4 leading-tight">
               Discover <span className="gradient-text-blue">Services</span>
             </h1>
             <p className="text-lg max-w-xl mb-10" style={{ color: 'var(--text-secondary)' }}>
@@ -111,7 +111,7 @@ export default function ServicesFeed() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-32">
             <SparklesIcon className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
-            <h3 className="text-xl font-bold text-white mb-2">No services found</h3>
+            <h3 className="text-xl font-bold text-black mb-2">No services found</h3>
             <p style={{ color: 'var(--text-secondary)' }}>Try a different search or filter.</p>
           </div>
         ) : (
@@ -143,19 +143,19 @@ export default function ServicesFeed() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-between p-4">
                         <div>
                           {service.categories?.slice(0, 1).map((c: any) => (
-                            <span key={c.id} className="badge text-white" style={{ background: 'rgba(79,110,247,0.6)', border: '1px solid rgba(79,110,247,0.4)' }}>
+                            <span key={c.id} className="badge text-black" style={{ background: 'rgba(79,110,247,0.6)', border: '1px solid rgba(79,110,247,0.4)' }}>
                               {c.name}
                             </span>
                           ))}
                         </div>
-                        <ArrowRightIcon className="w-5 h-5 text-white" />
+                        <ArrowRightIcon className="w-5 h-5 text-black" />
                       </div>
                       {/* Author floating pill */}
                       {service.author && (
                         <div className="absolute top-3 left-3 flex items-center gap-2 px-2.5 py-1 rounded-full"
-                          style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}>
+                          style={{ background: 'rgba(239, 239, 239, 0.6)', backdropFilter: 'blur(8px)' }}>
                           <img src={service.author.avatar} alt="" className="w-5 h-5 rounded-full" />
-                          <span className="text-xs text-white font-medium">{service.author.name}</span>
+                          <span className="text-xs text-black font-medium">{service.author.name}</span>
                           {service.author.online && <span className="w-1.5 h-1.5 rounded-full bg-green-400" />}
                         </div>
                       )}
@@ -169,7 +169,7 @@ export default function ServicesFeed() {
 
                     {/* Card Body */}
                     <div className="p-5 flex flex-col gap-3">
-                      <h3 className="font-semibold text-white text-sm leading-relaxed line-clamp-2 group-hover:text-blue-300 transition-colors">
+                      <h3 className="font-semibold text-black text-sm leading-relaxed line-clamp-2 group-hover:text-blue-300 transition-colors">
                         {service.title}
                       </h3>
 
@@ -201,7 +201,7 @@ export default function ServicesFeed() {
                         </div>
                         <div className="text-right">
                           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>from </span>
-                          <span className="text-sm font-bold text-white" dangerouslySetInnerHTML={{ __html: service.price_html || '$0' }} />
+                          <span className="text-sm font-bold text-black" dangerouslySetInnerHTML={{ __html: service.price_html || '$0' }} />
                         </div>
                       </div>
                     </div>

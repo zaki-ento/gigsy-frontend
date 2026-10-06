@@ -230,8 +230,6 @@ h4, h5, h6 {
 }
 
 /* Light-theme remap for classes written against the previous dark UI. */
-.text-white { color: var(--text-primary); }
-.hover\:text-white:hover { color: var(--text-primary); }
 .bg-white\/5 { background-color: rgba(29, 29, 31, 0.04); }
 .bg-white\/10 { background-color: rgba(29, 29, 31, 0.06); }
 .hover\:bg-white\/5:hover,
@@ -264,4 +262,10 @@ h4, h5, h6 {
 [style*="opacity: 0"] {
   opacity: 1 !important;
   transform: none !important;
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-sm;
+  }
 }

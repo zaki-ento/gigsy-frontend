@@ -67,7 +67,7 @@ export default function WalletPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-black text-white mb-2">Wallet</h1>
+        <h1 className="text-3xl font-black text-black mb-2">Wallet</h1>
         <p className="text-[var(--text-secondary)]">Manage your funds and view transactions.</p>
       </div>
 
@@ -112,7 +112,7 @@ export default function WalletPage() {
 
         {/* Deposit Card */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card rounded-3xl p-8">
-          <h2 className="text-lg font-bold text-white mb-4">Add Funds</h2>
+          <h2 className="text-lg font-bold text-black mb-4">Add Funds</h2>
           <p className="text-sm text-[var(--text-secondary)] mb-6">Deposit funds to securely pay for services on Gigneo.</p>
           <div className="space-y-4">
             <div className="relative">
@@ -139,7 +139,7 @@ export default function WalletPage() {
       {/* Transactions */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-3xl overflow-hidden">
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white">Recent Transactions</h2>
+          <h2 className="text-lg font-bold text-black">Recent Transactions</h2>
           <button className="text-sm text-[var(--accent-blue)] hover:text-blue-300 font-medium">View All</button>
         </div>
         {invoices.length === 0 && withdrawals.length === 0 ? (

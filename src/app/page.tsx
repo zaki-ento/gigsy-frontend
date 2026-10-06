@@ -49,7 +49,7 @@ function ServiceCard({ service, idx }: { service: any; idx: number }) {
       transition={{ duration: 0.5, delay: idx * 0.1 }}
     >
       <Link href={`/services/${service.id}`} className="block glass-card rounded-2xl overflow-hidden group">
-        <div className="aspect-[4/3] relative overflow-hidden bg-white/5">
+        <div className="aspect-[4/3] relative overflow-hidden bg-black/5">
           {service.thumbnail?.url ? (
             <img
               src={service.thumbnail.url}
@@ -63,7 +63,7 @@ function ServiceCard({ service, idx }: { service: any; idx: number }) {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           {service.author && (
-            <div className="absolute top-3 left-3 flex items-center gap-2 px-2.5 py-1.5 rounded-full text-xs font-medium text-white"
+            <div className="absolute top-3 left-3 flex items-center gap-2 px-2.5 py-1.5 rounded-full text-xs font-medium text-black"
               style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }}>
               <img src={service.author.avatar} alt="" className="w-5 h-5 rounded-full" />
               {service.author.name}
@@ -77,7 +77,7 @@ function ServiceCard({ service, idx }: { service: any; idx: number }) {
           </div>
         </div>
         <div className="p-4">
-          <h3 className="text-sm font-semibold text-white line-clamp-2 mb-3 leading-relaxed group-hover:text-blue-300 transition-colors">
+          <h3 className="text-sm font-semibold text-black line-clamp-2 mb-3 leading-relaxed group-hover:text-blue-300 transition-colors">
             {service.title}
           </h3>
           <div className="flex items-center justify-between">
@@ -87,7 +87,7 @@ function ServiceCard({ service, idx }: { service: any; idx: number }) {
             </div>
             <div>
               <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>from </span>
-              <span className="text-sm font-bold text-white" dangerouslySetInnerHTML={{ __html: service.price_html || '$45' }} />
+              <span className="text-sm font-bold text-black" dangerouslySetInnerHTML={{ __html: service.price_html || '$45' }} />
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ function FreelancerCard({ f, idx }: { f: any; idx: number }) {
             {f.avatar ? (
               <img src={f.avatar} alt={f.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-white" style={{ background: 'var(--bg-card-hover)' }}>
+              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-black" style={{ background: 'var(--bg-card-hover)' }}>
                 {f.name?.charAt(0)}
               </div>
             )}
@@ -120,14 +120,14 @@ function FreelancerCard({ f, idx }: { f: any; idx: number }) {
             <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-green-500 border-2 border-[var(--bg-primary)]" />
           )}
         </div>
-        <h3 className="font-bold text-white mb-1 group-hover:gradient-text-blue transition-colors text-sm">{f.name}</h3>
+        <h3 className="font-bold text-black mb-1 group-hover:gradient-text-blue transition-colors text-sm">{f.name}</h3>
         <p className="text-xs mb-3 line-clamp-1" style={{ color: 'var(--accent-blue)' }}>{f.tagline || 'Expert Professional'}</p>
         <div className="flex items-center justify-center gap-1 text-yellow-400 mb-4">
           <StarIcon className="w-3.5 h-3.5 fill-yellow-400" />
           <span className="text-xs font-bold text-yellow-400">{f.rating?.average || '5.0'}</span>
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>({f.rating?.count || 0})</span>
         </div>
-        <span className="text-xs px-3 py-1.5 rounded-lg font-medium transition-all group-hover:text-white" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-secondary)' }}>
+        <span className="text-xs px-3 py-1.5 rounded-lg font-medium transition-all group-hover:text-black" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-secondary)' }}>
           View Profile →
         </span>
       </Link>
@@ -210,7 +210,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/register"
-              className="px-8 py-4 rounded-2xl text-base font-semibold flex items-center justify-center gap-2 transition-all hover:bg-white/5"
+              className="px-8 py-4 rounded-2xl text-base font-semibold flex items-center justify-center gap-2 transition-all hover:bg-black/5"
               style={{ border: '1px solid var(--border)', color: 'var(--text-primary)' }}
             >
               Start Selling
@@ -266,7 +266,7 @@ export default function HomePage() {
                 <SparklesIcon className="w-4 h-4" />
                 Featured Services
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
+              <h2 className="text-4xl md:text-5xl font-black text-black leading-tight">
                 Discover <span className="gradient-text-blue">top-tier</span><br />creative work
               </h2>
             </div>
@@ -306,7 +306,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <div className="section-tag mb-4 inline-flex"><BoltIcon className="w-4 h-4" />Browse by Category</div>
-            <h2 className="text-4xl md:text-5xl font-black text-white">Everything your<br /><span className="gradient-text-pink">business needs</span></h2>
+            <h2 className="text-4xl md:text-5xl font-black text-black">Everything your<br /><span className="gradient-text-pink">business needs</span></h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {(categories.length ? categories.map((c) => ({ label: c.name, href: `/services?category=${c.id}` })) : [
@@ -341,7 +341,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4">
             <div>
               <div className="section-tag mb-4 inline-flex"><UserGroupIcon className="w-4 h-4" />Elite Talent</div>
-              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
+              <h2 className="text-4xl md:text-5xl font-black text-black leading-tight">
                 Work with the<br /><span className="gradient-text-blue">world's best</span>
               </h2>
             </div>
@@ -375,7 +375,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="section-tag mb-4 inline-flex"><ShieldCheckIcon className="w-4 h-4" />Why Gigneo</div>
-            <h2 className="text-4xl md:text-5xl font-black text-white">The smarter way<br />to <span className="gradient-text-blue">get work done</span></h2>
+            <h2 className="text-4xl md:text-5xl font-black text-black">The smarter way<br />to <span className="gradient-text-blue">get work done</span></h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -415,7 +415,7 @@ export default function HomePage() {
                   style={{ background: `${feature.color}20`, border: `1px solid ${feature.color}30` }}>
                   <feature.icon className="w-6 h-6" style={{ color: feature.color }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-4">{feature.title}</h3>
+                <h3 className="text-xl font-bold text-black mb-4">{feature.title}</h3>
                 <p className="leading-relaxed text-sm" style={{ color: 'var(--text-secondary)' }}>{feature.description}</p>
               </motion.div>
             ))}
@@ -429,7 +429,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-14">
             <div className="section-tag mb-4 inline-flex"><StarIcon className="w-4 h-4" />Social Proof</div>
-            <h2 className="text-4xl md:text-5xl font-black text-white">Loved by <span className="gradient-text-pink">thousands</span></h2>
+            <h2 className="text-4xl md:text-5xl font-black text-black">Loved by <span className="gradient-text-pink">thousands</span></h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -467,7 +467,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-3">
                   <img src={t.avatar} alt={t.name} className="w-10 h-10 rounded-xl object-cover" />
                   <div>
-                    <div className="text-sm font-bold text-white">{t.name}</div>
+                    <div className="text-sm font-bold text-black">{t.name}</div>
                     <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t.role}</div>
                   </div>
                 </div>
@@ -487,7 +487,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
+            <h2 className="text-5xl md:text-6xl font-black text-black mb-6 leading-tight">
               Ready to build<br />something <span className="gradient-text-blue">amazing?</span>
             </h2>
             <p className="text-lg mb-10" style={{ color: 'var(--text-secondary)' }}>
@@ -498,7 +498,7 @@ export default function HomePage() {
                 <span className="relative z-10">Start Free Today</span>
                 <ArrowRightIcon className="w-5 h-5 relative z-10" />
               </Link>
-              <Link href="/services" className="px-10 py-5 rounded-2xl text-lg font-semibold flex items-center justify-center gap-2 transition-all hover:bg-white/5"
+              <Link href="/services" className="px-10 py-5 rounded-2xl text-lg font-semibold flex items-center justify-center gap-2 transition-all hover:bg-black/5"
                 style={{ border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
                 Browse Marketplace
               </Link>

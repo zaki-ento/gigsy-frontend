@@ -49,7 +49,7 @@ export default function SingleEmployer() {
       <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-600/20 rounded-full blur-[150px] pointer-events-none"></div>
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <Link href="/employers" className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors">
+        <Link href="/employers" className="inline-flex items-center text-slate-400 hover:text-black mb-8 transition-colors">
           <ArrowLeftIcon className="w-4 h-4 mr-2" /> Back to Companies
         </Link>
         
@@ -74,7 +74,7 @@ export default function SingleEmployer() {
             </div>
             
             <div className="text-center sm:text-left sm:ml-8 mt-6 sm:mt-20 flex-1">
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{profile.name}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-black mb-2">{profile.name}</h1>
               <p className="text-lg text-amber-400 font-medium mb-4">{profile.tagline || 'Leading Organization'}</p>
               
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-sm text-slate-400">
@@ -84,7 +84,7 @@ export default function SingleEmployer() {
           </div>
           
           <div className="px-8 md:px-12 py-10 border-t border-slate-700/50 bg-slate-900/30">
-            <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-wider text-sm">About Company</h3>
+            <h3 className="text-xl font-bold text-black mb-6 uppercase tracking-wider text-sm">About Company</h3>
             <div className="prose prose-invert max-w-none prose-lg text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: profile.description || 'No description provided.' }} />
           </div>
         </motion.div>

@@ -88,7 +88,7 @@ export default function ChatPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-3xl font-black text-white mb-2">Messages</h1>
+        <h1 className="text-3xl font-black text-black mb-2">Messages</h1>
         <p className="text-[var(--text-secondary)]">Chat with clients and freelancers.</p>
       </div>
 
@@ -133,7 +133,7 @@ export default function ChatPage() {
                 <button
                   key={conv.id || conv.profile_id}
                   onClick={() => selectConversation(conv)}
-                  className="w-full flex items-center gap-3 p-4 text-left transition-all hover:bg-white/5"
+                  className="w-full flex items-center gap-3 p-4 text-left transition-all hover:bg-black/5"
                   style={{
                     background: selectedConv?.id === conv.id ? 'rgba(79,110,247,0.08)' : 'transparent',
                     borderLeft: `2px solid ${selectedConv?.id === conv.id ? 'var(--accent-blue)' : 'transparent'}`,
@@ -144,7 +144,7 @@ export default function ChatPage() {
                       <img src={conv.avatar} alt={conv.name} className="w-10 h-10 rounded-full object-cover" />
                     ) : (
                       <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-black"
                         style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}
                       >
                         {conv.name?.charAt(0) || '?'}
@@ -155,7 +155,7 @@ export default function ChatPage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">{conv.name || 'User'}</p>
+                    <p className="text-sm font-semibold text-black truncate">{conv.name || 'User'}</p>
                     <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
                       {conv.last_message || 'Start a conversation'}
                     </p>
@@ -179,12 +179,12 @@ export default function ChatPage() {
               {selectedConv.avatar ? (
                 <img src={selectedConv.avatar} alt={selectedConv.name} className="w-9 h-9 rounded-full object-cover" />
               ) : (
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ background: 'var(--bg-card-hover)' }}>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-black" style={{ background: 'var(--bg-card-hover)' }}>
                   {selectedConv.name?.charAt(0) || '?'}
                 </div>
               )}
               <div>
-                <p className="font-bold text-white text-sm">{selectedConv.name || 'User'}</p>
+                <p className="font-bold text-black text-sm">{selectedConv.name || 'User'}</p>
                 <p className="text-xs" style={{ color: (selectedConv.is_online || selectedConv.online) ? '#1a7f37' : 'var(--text-muted)' }}>
                   {(selectedConv.is_online || selectedConv.online) ? 'Online' : 'Offline'}
                 </p>
@@ -255,7 +255,7 @@ export default function ChatPage() {
           <div className="flex-1 flex items-center justify-center text-center">
             <div>
               <ChatBubbleLeftEllipsisIcon className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
-              <h2 className="text-xl font-bold text-white mb-2">Select a conversation</h2>
+              <h2 className="text-xl font-bold text-black mb-2">Select a conversation</h2>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 Choose from the list to start messaging.
               </p>

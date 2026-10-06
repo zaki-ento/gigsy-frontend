@@ -39,7 +39,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center space-x-4 mt-6">
               {['𝕏', 'in', 'f', 'ig'].map((s) => (
-                <a key={s} href="#" className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold transition-all hover:bg-white/5"
+                <a key={s} href="#" className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold transition-all hover:bg-black/5"
                   style={{ border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
                 >
                   {s}
@@ -55,7 +55,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <Link href={link.href} className="text-sm transition-colors hover:text-white" style={{ color: 'var(--text-secondary)' }}>
+                    <Link href={link.href} className="text-sm transition-colors hover:text-black" style={{ color: 'var(--text-secondary)' }}>
                       {link.label}
                     </Link>
                   </li>

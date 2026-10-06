@@ -75,7 +75,7 @@ export default function LoginPage() {
             transition={{ delay: 0.2 }}
             className="mt-8"
           >
-            <h1 className="text-3xl font-black text-white mb-2">Welcome back</h1>
+            <h1 className="text-3xl font-black text-black mb-2">Welcome back</h1>
             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Sign in to access your Gigneo account
             </p>
@@ -148,7 +148,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:text-white"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:text-black"
                   style={{ color: 'var(--text-muted)' }}
                 >
                   {showPassword ? (
@@ -208,7 +208,7 @@ export default function LoginPage() {
 
           <Link
             href="/register"
-            className="block text-center py-3.5 rounded-2xl text-sm font-semibold transition-all hover:bg-white/10"
+            className="block text-center py-3.5 rounded-2xl text-sm font-semibold transition-all hover:bg-black/10"
             style={{ border: '1px solid var(--border)', color: 'var(--text-primary)' }}
           >
             Create an account →
@@ -217,9 +217,9 @@ export default function LoginPage() {
 
         <p className="text-center text-xs mt-6" style={{ color: 'var(--text-muted)' }}>
           By continuing, you agree to Gigneo's{' '}
-          <a href="#" className="hover:text-white underline underline-offset-2">Terms</a>
+          <a href="#" className="hover:text-black underline underline-offset-2">Terms</a>
           {' '}and{' '}
-          <a href="#" className="hover:text-white underline underline-offset-2">Privacy Policy</a>
+          <a href="#" className="hover:text-black underline underline-offset-2">Privacy Policy</a>
         </p>
       </motion.div>
     </div>

@@ -59,7 +59,7 @@ export default function SingleService() {
 
   if (!service) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-white" style={{ background: 'var(--bg-primary)' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center text-black" style={{ background: 'var(--bg-primary)' }}>
         <SparklesIcon className="w-16 h-16 mb-4" style={{ color: 'var(--text-muted)' }} />
         <h1 className="text-2xl font-bold mb-3">Service not found</h1>
         <Link href="/services" className="flex items-center gap-2" style={{ color: 'var(--accent-blue)' }}>
@@ -73,7 +73,7 @@ export default function SingleService() {
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Back link */}
-        <Link href="/services" className="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-colors hover:text-white" style={{ color: 'var(--text-secondary)' }}>
+        <Link href="/services" className="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-colors hover:text-black" style={{ color: 'var(--text-secondary)' }}>
           <ArrowLeftIcon className="w-4 h-4" /> Back to Services
         </Link>
 
@@ -82,7 +82,7 @@ export default function SingleService() {
           <div className="lg:col-span-2 space-y-8">
             {/* Title */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <h1 className="text-3xl md:text-4xl font-black text-white leading-tight mb-4">{service.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-black text-black leading-tight mb-4">{service.title}</h1>
 
               {/* Author row */}
               {service.author && (
@@ -94,7 +94,7 @@ export default function SingleService() {
                     )}
                   </div>
                   <div>
-                    <Link href={`/freelancers/${service.author.id}`} className="font-semibold text-white hover:text-blue-300 transition-colors flex items-center gap-1.5">
+                    <Link href={`/freelancers/${service.author.id}`} className="font-semibold text-black hover:text-blue-300 transition-colors flex items-center gap-1.5">
                       {service.author.name}
                       {service.author.verified && <CheckBadgeSolid className="w-4 h-4 text-blue-400" />}
                     </Link>
@@ -122,7 +122,7 @@ export default function SingleService() {
 
             {/* Description */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-3xl p-8">
-              <h2 className="text-xl font-bold text-white mb-6">About this service</h2>
+              <h2 className="text-xl font-bold text-black mb-6">About this service</h2>
               <div
                 className="prose prose-sm max-w-none leading-relaxed"
                 style={{ color: 'var(--text-secondary)' }}
@@ -133,7 +133,7 @@ export default function SingleService() {
             {/* Skills & Categories */}
             {(service.skills?.length > 0 || service.categories?.length > 0) && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card rounded-3xl p-8">
-                <h2 className="text-xl font-bold text-white mb-6">Skills & Categories</h2>
+                <h2 className="text-xl font-bold text-black mb-6">Skills & Categories</h2>
                 {service.categories?.length > 0 && (
                   <div className="mb-5">
                     <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-muted)' }}>CATEGORIES</h3>
@@ -168,23 +168,23 @@ export default function SingleService() {
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-3xl overflow-hidden">
                 {/* Plan selector (Basic) */}
                 <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
-                  <h3 className="font-bold text-white mb-4">Order this Service</h3>
+                  <h3 className="font-bold text-black mb-4">Order this Service</h3>
 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Price</span>
-                      <span className="text-2xl font-black text-white" dangerouslySetInnerHTML={{ __html: service.price_html || '$0' }} />
+                      <span className="text-2xl font-black text-black" dangerouslySetInnerHTML={{ __html: service.price_html || '$0' }} />
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Delivery</span>
-                      <span className="text-sm font-semibold text-white flex items-center gap-1.5">
+                      <span className="text-sm font-semibold text-black flex items-center gap-1.5">
                         <ClockIcon className="w-4 h-4" style={{ color: 'var(--accent-blue)' }} />
                         {service.delivery}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Orders</span>
-                      <span className="text-sm font-semibold text-white">{service.orders} completed</span>
+                      <span className="text-sm font-semibold text-black">{service.orders} completed</span>
                     </div>
                   </div>
                 </div>
@@ -238,7 +238,7 @@ export default function SingleService() {
                   <Link href={`/freelancers/${service.author.id}`} className="flex items-center gap-3 group">
                     <img src={service.author.avatar} alt="" className="w-12 h-12 rounded-xl object-cover" />
                     <div>
-                      <div className="font-bold text-white group-hover:text-blue-300 transition-colors">{service.author.name}</div>
+                      <div className="font-bold text-black group-hover:text-blue-300 transition-colors">{service.author.name}</div>
                       <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>{service.author.tagline}</div>
                     </div>
                   </Link>

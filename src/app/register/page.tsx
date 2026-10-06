@@ -87,7 +87,7 @@ export default function RegisterPage() {
             <img src="/logo-dark.png" alt="Gigneo" className="h-10 w-auto object-contain" />
           </Link>
           <div className="mt-6">
-            <h1 className="text-3xl font-black text-white mb-2">Join Gigneo</h1>
+            <h1 className="text-3xl font-black text-black mb-2">Join Gigneo</h1>
             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Create your account and start today
             </p>
@@ -234,7 +234,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:text-white"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:text-black"
                   style={{ color: 'var(--text-muted)' }}
                 >
                   {showPassword ? <EyeSlashIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
@@ -253,16 +253,16 @@ export default function RegisterPage() {
                 }}
               >
                 {agreed && (
-                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <svg className="w-3 h-3 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 )}
               </div>
               <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 I agree to the{' '}
-                <a href="#" className="hover:text-white underline underline-offset-2" style={{ color: 'var(--accent-blue)' }}>Terms of Service</a>
+                <a href="#" className="hover:text-black underline underline-offset-2" style={{ color: 'var(--accent-blue)' }}>Terms of Service</a>
                 {' '}and{' '}
-                <a href="#" className="hover:text-white underline underline-offset-2" style={{ color: 'var(--accent-blue)' }}>Privacy Policy</a>
+                <a href="#" className="hover:text-black underline underline-offset-2" style={{ color: 'var(--accent-blue)' }}>Privacy Policy</a>
               </span>
             </label>
 
@@ -301,7 +301,7 @@ export default function RegisterPage() {
 
           <Link
             href="/login"
-            className="block text-center py-3.5 rounded-2xl text-sm font-semibold transition-all hover:bg-white/10"
+            className="block text-center py-3.5 rounded-2xl text-sm font-semibold transition-all hover:bg-black/10"
             style={{ border: '1px solid var(--border)', color: 'var(--text-primary)' }}
           >
             Sign in instead

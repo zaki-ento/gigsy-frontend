@@ -52,7 +52,7 @@ export default function JobsFeed() {
               <BriefcaseIcon className="w-4 h-4" />
               Job Board
             </div>
-            <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-black text-black mb-4 leading-tight">
               Find Your <span className="gradient-text-blue">Dream Project</span>
             </h1>
             <p className="text-lg max-w-xl mb-10" style={{ color: 'var(--text-secondary)' }}>
@@ -111,7 +111,7 @@ export default function JobsFeed() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-32">
             <BriefcaseIcon className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
-            <h3 className="text-xl font-bold text-white mb-2">No jobs found</h3>
+            <h3 className="text-xl font-bold text-black mb-2">No jobs found</h3>
             <p style={{ color: 'var(--text-secondary)' }}>Try adjusting your search or filter.</p>
           </div>
         ) : (
@@ -139,7 +139,7 @@ export default function JobsFeed() {
                             />
                           )}
                           <div className="min-w-0">
-                            <h2 className="text-xl font-bold text-white mb-1 group-hover:text-blue-300 transition-colors truncate">
+                            <h2 className="text-xl font-bold text-black mb-1 group-hover:text-blue-300 transition-colors truncate">
                               {job.title}
                             </h2>
                             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -184,7 +184,7 @@ export default function JobsFeed() {
 
                       {/* CTA */}
                       <div className="shrink-0">
-                        <span className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all group-hover:text-white"
+                        <span className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all group-hover:text-black"
                           style={{ border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
                           View Details
                           <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

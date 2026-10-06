@@ -103,7 +103,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-black text-white mb-2">Account Settings</h1>
+        <h1 className="text-3xl font-black text-black mb-2">Account Settings</h1>
         <p className="text-[var(--text-secondary)]">Manage your account preferences and personal information.</p>
       </div>
 
@@ -115,7 +115,7 @@ export default function SettingsPage() {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
               activeTab === 'profile'
                 ? 'bg-[var(--glow-blue)] text-[var(--accent-blue)] border border-[rgba(79,110,247,0.2)]'
-                : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5 border border-transparent'
+                : 'text-[var(--text-secondary)] hover:text-black hover:bg-black/5 border border-transparent'
             }`}
           >
             <UserCircleIcon className="w-5 h-5" /> Edit Profile
@@ -125,7 +125,7 @@ export default function SettingsPage() {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
               activeTab === 'security'
                 ? 'bg-[var(--glow-blue)] text-[var(--accent-blue)] border border-[rgba(79,110,247,0.2)]'
-                : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5 border border-transparent'
+                : 'text-[var(--text-secondary)] hover:text-black hover:bg-black/5 border border-transparent'
             }`}
           >
             <KeyIcon className="w-5 h-5" /> Password & Security
@@ -135,7 +135,7 @@ export default function SettingsPage() {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
               activeTab === 'notifications'
                 ? 'bg-[var(--glow-blue)] text-[var(--accent-blue)] border border-[rgba(79,110,247,0.2)]'
-                : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5 border border-transparent'
+                : 'text-[var(--text-secondary)] hover:text-black hover:bg-black/5 border border-transparent'
             }`}
           >
             <BellIcon className="w-5 h-5" /> Notifications
@@ -158,10 +158,10 @@ export default function SettingsPage() {
 
           {activeTab === 'profile' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <h2 className="text-xl font-bold text-white mb-6">Profile Information</h2>
+              <h2 className="text-xl font-bold text-black mb-6">Profile Information</h2>
               <form onSubmit={handleProfileUpdate} className="space-y-6 max-w-2xl">
                 <div className="flex items-center gap-6 mb-8">
-                  <div className="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
+                  <div className="w-24 h-24 rounded-2xl bg-black/5 border border-white/10 overflow-hidden">
                     {profile?.avatar ? (
                       <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
                     ) : (
@@ -230,7 +230,7 @@ export default function SettingsPage() {
 
           {activeTab === 'security' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <h2 className="text-xl font-bold text-white mb-2">Password & Security</h2>
+              <h2 className="text-xl font-bold text-black mb-2">Password & Security</h2>
               <p className="text-[var(--text-secondary)] text-sm mb-8">Ensure your account is using a long, random password to stay secure.</p>
               
               <form onSubmit={handlePasswordUpdate} className="space-y-6 max-w-xl">
@@ -299,7 +299,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="mt-12 pt-8 border-t border-white/5">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
                   <ShieldCheckIcon className="w-5 h-5 text-red-400" /> Danger Zone
                 </h3>
                 <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 flex items-center justify-between">
@@ -338,7 +338,7 @@ export default function SettingsPage() {
 
           {activeTab === 'notifications' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <h2 className="text-xl font-bold text-white mb-2">Notification Preferences</h2>
+              <h2 className="text-xl font-bold text-black mb-2">Notification Preferences</h2>
               <p className="text-[var(--text-secondary)] text-sm mb-8">Choose what you want to be notified about.</p>
 
               <div className="space-y-2 max-w-2xl">

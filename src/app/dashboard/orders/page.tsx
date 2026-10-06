@@ -29,7 +29,7 @@ export default function OrdersPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-black text-white mb-2">Orders</h1>
+        <h1 className="text-3xl font-black text-black mb-2">Orders</h1>
         <p className="text-[var(--text-secondary)]">Track your active projects and deliveries.</p>
       </div>
 
@@ -43,7 +43,7 @@ export default function OrdersPage() {
         ) : orders.length === 0 ? (
           <div className="p-16 text-center">
             <ShoppingBagIcon className="w-16 h-16 mx-auto mb-4 text-[var(--text-muted)]" />
-            <h2 className="text-xl font-bold text-white mb-2">No orders found</h2>
+            <h2 className="text-xl font-bold text-black mb-2">No orders found</h2>
             <p className="text-[var(--text-secondary)] mb-6">You don't have any active orders right now.</p>
             <Link href="/services" className="btn-primary inline-flex px-6 py-3 rounded-xl font-bold">
               <span className="relative z-10">Browse Marketplace</span>
@@ -58,11 +58,11 @@ export default function OrdersPage() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="p-6 hover:bg-white/5 transition-colors flex flex-col md:flex-row gap-6 md:items-center justify-between group"
+                  className="p-6 hover:bg-black/5 transition-colors flex flex-col md:flex-row gap-6 md:items-center justify-between group"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-sm font-bold text-white">#{order.id}</span>
+                      <span className="text-sm font-bold text-black">#{order.id}</span>
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(order.status)}`}>
                         {order.status || 'Pending'}
                       </span>
@@ -81,7 +81,7 @@ export default function OrdersPage() {
                       <div className="text-xs text-[var(--text-muted)] mb-1">Total</div>
                       <div className="font-bold" style={{ color: 'var(--text-primary)' }} dangerouslySetInnerHTML={{ __html: order.total_html || order.total_price_html || '$0' }} />
                     </div>
-                    <Link href={`/dashboard/orders/${order.id}`} className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/10">
+                    <Link href={`/dashboard/orders/${order.id}`} className="w-10 h-10 rounded-xl bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors border border-white/10">
                       <ArrowRightIcon className="w-4 h-4" style={{ color: 'var(--text-primary)' }} />
                     </Link>
                   </div>

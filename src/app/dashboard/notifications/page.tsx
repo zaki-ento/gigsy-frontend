@@ -69,7 +69,7 @@ export default function NotificationsPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black text-white mb-2">Notifications</h1>
+          <h1 className="text-3xl font-black text-black mb-2">Notifications</h1>
           <p className="text-[var(--text-secondary)]">
             {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}` : 'All caught up!'}
           </p>
@@ -77,7 +77,7 @@ export default function NotificationsPage() {
         {unreadCount > 0 && (
           <button
             onClick={markAllRead}
-            className="text-sm font-medium px-4 py-2 rounded-xl transition-all hover:bg-white/10"
+            className="text-sm font-medium px-4 py-2 rounded-xl transition-all hover:bg-black/10"
             style={{ color: 'var(--accent-blue)', border: '1px solid rgba(79,110,247,0.3)' }}
           >
             Mark all as read
@@ -101,7 +101,7 @@ export default function NotificationsPage() {
         ) : notifications.length === 0 ? (
           <div className="p-16 text-center">
             <BellIcon className="w-16 h-16 mx-auto mb-4 text-[var(--text-muted)]" />
-            <h2 className="text-xl font-bold text-white mb-2">No notifications yet</h2>
+            <h2 className="text-xl font-bold text-black mb-2">No notifications yet</h2>
             <p className="text-[var(--text-secondary)]">
               We'll notify you when something important happens.
             </p>
@@ -117,7 +117,7 @@ export default function NotificationsPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.04 }}
-                    className={`flex items-start gap-4 p-5 transition-colors hover:bg-white/5 ${
+                    className={`flex items-start gap-4 p-5 transition-colors hover:bg-black/5 ${
                       isUnread(notif) ? 'bg-[var(--glow-blue)]' : ''
                     }`}
                   >

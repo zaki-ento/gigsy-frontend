@@ -57,11 +57,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <aside className="w-full md:w-64 shrink-0">
             <div className="glass-card rounded-3xl p-6 sticky top-24 border border-white/5">
               <div className="flex items-center gap-4 mb-8 pb-8 border-b border-white/5">
-                <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/10 bg-black/5 flex items-center justify-center">
                   <img src={profile?.avatar || '/default-avatar.png'} alt={profile?.name || ''} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-white font-bold truncate text-sm">{profile?.name || 'Loading...'}</h3>
+                  <h3 className="text-black font-bold truncate text-sm">{profile?.name || 'Loading...'}</h3>
                   <p className="text-xs text-[var(--text-muted)] capitalize">{profile?.type || 'User'}</p>
                 </div>
               </div>
@@ -76,7 +76,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                         isActive 
                           ? 'bg-[var(--glow-blue)] text-[var(--accent-blue)] border border-[rgba(79,110,247,0.2)]' 
-                          : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5 border border-transparent'
+                          : 'text-[var(--text-secondary)] hover:text-black hover:bg-black/5 border border-transparent'
                       }`}
                     >
                       <item.icon className={`w-5 h-5 ${isActive ? 'text-[var(--accent-blue)]' : ''}`} />

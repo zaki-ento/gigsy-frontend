@@ -78,7 +78,7 @@ export default function SingleJob() {
 
   if (!job) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-white" style={{ background: 'var(--bg-primary)' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center text-black" style={{ background: 'var(--bg-primary)' }}>
         <BriefcaseIcon className="w-16 h-16 mb-4" style={{ color: 'var(--text-muted)' }} />
         <h1 className="text-2xl font-bold mb-3">Job not found</h1>
         <Link href="/jobs" className="flex items-center gap-2" style={{ color: 'var(--accent-blue)' }}>
@@ -91,7 +91,7 @@ export default function SingleJob() {
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <Link href="/jobs" className="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-colors hover:text-white" style={{ color: 'var(--text-secondary)' }}>
+        <Link href="/jobs" className="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-colors hover:text-black" style={{ color: 'var(--text-secondary)' }}>
           <ArrowLeftIcon className="w-4 h-4" /> Back to Jobs
         </Link>
 
@@ -99,15 +99,15 @@ export default function SingleJob() {
           {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-3xl p-8 md:p-10">
-              <h1 className="text-3xl md:text-4xl font-black text-white mb-6 leading-tight">{job.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-black text-black mb-6 leading-tight">{job.title}</h1>
 
               {/* Stats row */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
                 {[
                   { icon: CurrencyDollarIcon, label: 'Budget', value: job.budget_html, valueClass: 'text-green-400' },
-                  { icon: BriefcaseIcon, label: 'Experience', value: job.experience || 'Any Level', valueClass: 'text-white' },
-                  { icon: UserCircleIcon, label: 'Proposals', value: `${job.proposals || 0} bids`, valueClass: 'text-white' },
-                  { icon: ClockIcon, label: 'Posted', value: new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), valueClass: 'text-white' },
+                  { icon: BriefcaseIcon, label: 'Experience', value: job.experience || 'Any Level', valueClass: 'text-black' },
+                  { icon: UserCircleIcon, label: 'Proposals', value: `${job.proposals || 0} bids`, valueClass: 'text-black' },
+                  { icon: ClockIcon, label: 'Posted', value: new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), valueClass: 'text-black' },
                 ].map((stat) => (
                   <div key={stat.label} className="rounded-2xl p-4 text-center" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                     <stat.icon className="w-5 h-5 mx-auto mb-2" style={{ color: 'var(--accent-blue)' }} />
@@ -117,7 +117,7 @@ export default function SingleJob() {
                 ))}
               </div>
 
-              <h2 className="text-lg font-bold text-white mb-4">Project Description</h2>
+              <h2 className="text-lg font-bold text-black mb-4">Project Description</h2>
               <div
                 className="prose prose-sm max-w-none leading-relaxed"
                 style={{ color: 'var(--text-secondary)' }}
@@ -159,7 +159,7 @@ export default function SingleJob() {
             {profile?.type === 'freelancer' && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-3xl p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-white">Submit a Proposal</h2>
+                  <h2 className="text-xl font-bold text-black">Submit a Proposal</h2>
                   {!showProposalForm && (
                     <button
                       onClick={() => setShowProposalForm(true)}
@@ -217,7 +217,7 @@ export default function SingleJob() {
                       </button>
                       <button
                         onClick={() => setShowProposalForm(false)}
-                        className="px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/5 transition-colors"
+                        className="px-6 py-3 rounded-xl text-sm font-semibold hover:bg-black/5 transition-colors"
                         style={{ border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
                       >
                         Cancel
@@ -238,7 +238,7 @@ export default function SingleJob() {
                 <Link href={`/employers/${job.author.id}`} className="flex items-center gap-3 group mb-4">
                   <img src={job.author.avatar} alt="" className="w-12 h-12 rounded-xl object-cover border" style={{ borderColor: 'var(--border)' }} />
                   <div>
-                    <div className="font-bold text-white group-hover:text-blue-300 transition-colors flex items-center gap-1.5">
+                    <div className="font-bold text-black group-hover:text-blue-300 transition-colors flex items-center gap-1.5">
                       {job.author.name}
                       {job.author.verified && <CheckBadgeIcon className="w-4 h-4 text-blue-400" />}
                     </div>
@@ -263,7 +263,7 @@ export default function SingleJob() {
             {/* Apply CTA for non-logged or employer-type */}
             {!token && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="glass-card rounded-3xl p-6 text-center">
-                <h3 className="font-bold text-white mb-2">Want to apply?</h3>
+                <h3 className="font-bold text-black mb-2">Want to apply?</h3>
                 <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>Create a free account to submit proposals and get hired.</p>
                 <Link href="/register" className="btn-primary w-full py-3 rounded-xl text-sm font-bold block">
                   <span className="relative z-10">Sign Up Free</span>

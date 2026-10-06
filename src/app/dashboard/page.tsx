@@ -5,24 +5,27 @@ import { fetchApi } from '@/lib/api';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
-  BriefcaseIcon,
-  ShoppingBagIcon,
-  WalletIcon,
-  ArrowUpRightIcon,
-  CheckCircleIcon,
-  MapPinIcon,
-  ClockIcon,
-  UserIcon,
+  BriefcaseIcon, ShoppingBagIcon, WalletIcon, ArrowUpRightIcon, CheckCircleIcon,
+  MapPinIcon, ClockIcon, UserIcon, BellAlertIcon, ChatBubbleLeftEllipsisIcon
 } from '@heroicons/react/24/outline';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { motion } from 'framer-motion';
 
 export default function DashboardOverview() {
   const { profile } = useAuth();
   const [stats, setStats] = useState<any>(null);
+  const [orderNotifications, setOrderNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi('/dashboard')
-      .then(res => setStats(res))
+    Promise.all([
+      fetchApi('/dashboard'),
+      fetchApi('/notifications?category=order&per_page=05')
+    ])
+      .then(([dashRes, notifsRes]) => {
+        setStats(dashRes);
+        setOrderNotifications(notifsRes?.items || notifsRes?.data?.items || []);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -37,261 +40,314 @@ export default function DashboardOverview() {
 
   const activeServices = amount(dash?.counts?.services);
   const activeOrders = amount(dash?.stats?.active_orders_count);
-  const availableCredits = dash?.stats?.credits || 0;
-
   const recentOrders = dash?.recent_orders || [];
-  const recentActivity = dash?.recent_activity;
-  const profileHealth = dash?.profile_health;
+  
+  // New API Data
+  const analytics = dash?.analytics || [];
+  const actionRequired = dash?.action_required || [];
+  const activeProposals = dash?.active_proposals || [];
+  const missingSteps = dash?.profile_missing_steps || [];
+  const wallet = dash?.wallet_breakdown || {};
+  const profileHealth = dash?.profile_health || { percentage: 0 };
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--accent-blue)' }}></div>
       </div>
     );
   }
 
+  const radius = 56;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (profileHealth.percentage / 100) * circumference;
+
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto text-[var(--text-primary)]">
+    <div className="space-y-8 max-w-[1400px] mx-auto text-[var(--text-primary)]">
       
-      {/* Top Banner Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Hero Welcome */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-[2rem] overflow-hidden p-8 md:p-10 flex flex-col md:flex-row items-center gap-8 border" 
+        style={{ 
+          borderColor: 'var(--border)', 
+          background: 'linear-gradient(135deg, rgba(206, 231, 255, 0.4), rgba(221, 214, 255, 0.3))' 
+        }}
+      >
+        <div className="absolute inset-0 bg-white/20 backdrop-blur-3xl -z-10"></div>
         
-        {/* Welcome Section */}
-        <div className="lg:col-span-5 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col justify-center">
-          <h1 className="text-xl font-bold mb-1">Welcome, {profile?.name?.split(' ')[0] || ''} 👋</h1>
-          <p className="text-sm text-[var(--text-secondary)] mb-6">Here's a quick overview of your work.</p>
-          <div className="flex items-center gap-3">
-            <button className="btn-primary py-2 px-5 text-sm rounded-lg">
-              + Add funds
-            </button>
-            <button className="bg-white border border-[var(--border)] text-[var(--text-primary)] hover:bg-gray-50 py-2 px-5 text-sm font-semibold rounded-lg transition-colors">
-              View services
-            </button>
+        {/* Avatar with Progress Ring */}
+        <div className="relative w-32 h-32 shrink-0 flex items-center justify-center">
+          <svg className="absolute inset-0 w-full h-full transform -rotate-90 pointer-events-none">
+            <circle cx="64" cy="64" r={radius} stroke="rgba(255,255,255,0.4)" strokeWidth="4" fill="none" />
+            <circle 
+              cx="64" cy="64" r={radius} 
+              stroke="var(--accent-blue)" 
+              strokeWidth="5" 
+              fill="none" 
+              strokeLinecap="round"
+              strokeDasharray={circumference} 
+              strokeDashoffset={strokeDashoffset} 
+              className="transition-all duration-1000 ease-out" 
+            />
+          </svg>
+          <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white/50 shadow-xl relative z-10">
+             <img src={profile?.avatar_url || profile?.avatar || '/default-avatar.png'} alt="" className="w-full h-full object-cover" />
           </div>
         </div>
 
-        {/* Small Stat Cards */}
-        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-5 flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-2">
-              <BriefcaseIcon className="w-6 h-6 text-purple-500" />
-              <ArrowUpRightIcon className="w-4 h-4 text-gray-400" />
-            </div>
-            <div className="text-2xl font-bold">{activeServices}</div>
-            <div className="flex items-center justify-between mt-1">
-              <span className="text-xs text-[var(--text-secondary)]">Active services</span>
-            </div>
-          </div>
+        <div className="flex-1 text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">Welcome back, {profile?.name?.split(' ')[0]}</h1>
+          <p className="text-[var(--text-secondary)] mb-6 text-lg max-w-2xl">
+            {profileHealth.percentage === 100 
+              ? "Your profile is fully optimized and looking great!" 
+              : "Let's complete your profile to unlock your full earning potential."}
+          </p>
           
-          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-5 flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-2">
-              <ShoppingBagIcon className="w-6 h-6 text-blue-500" />
-              <ArrowUpRightIcon className="w-4 h-4 text-gray-400" />
-            </div>
-            <div className="text-2xl font-bold">{activeOrders}</div>
-            <div className="flex items-center justify-between mt-1">
-              <span className="text-xs text-[var(--text-secondary)]">Active orders</span>
-            </div>
-          </div>
-          
-          {dash?.stats?.credits !== undefined && (
-            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-5 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-2">
-                <WalletIcon className="w-6 h-6 text-green-500" />
-                <ArrowUpRightIcon className="w-4 h-4 text-gray-400" />
-              </div>
-              <div className="text-2xl font-bold">{dash.stats.credits}</div>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-xs text-[var(--text-secondary)]">Available credits</span>
-              </div>
+          {missingSteps.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+              {missingSteps.slice(0, 2).map((step: string, i: number) => (
+                <span key={i} className="px-4 py-2 text-sm font-medium rounded-xl bg-white border shadow-sm" style={{ borderColor: 'var(--border)' }}>
+                  + {step}
+                </span>
+              ))}
+              {missingSteps.length > 2 && (
+                <span className="text-sm font-medium text-[var(--text-muted)]">+{missingSteps.length - 2} more</span>
+              )}
             </div>
           )}
         </div>
+      </motion.div>
+
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Available Balance', value: `$${wallet.available || '0.00'}`, color: 'var(--accent-blue)' },
+          { label: 'Pending Clearance', value: `$${wallet.pending_clearance || '0.00'}`, color: 'var(--accent-orange)' },
+          { label: 'Active Escrow', value: `$${wallet.active_escrow || '0.00'}`, color: 'var(--accent-teal)' },
+          { label: 'Total Earnings', value: `$${wallet.withdrawn_total || '0.00'}`, color: 'var(--accent-purple)' },
+        ].map((metric, i) => (
+          <motion.div 
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            whileHover={{ y: -4, borderColor: metric.color }} 
+            className="glass-card rounded-[2rem] p-6 border transition-all" 
+            style={{ borderColor: 'var(--border)', boxShadow: '0 8px 32px rgba(5,0,26,0.03)' }}
+          >
+            <p className="text-sm text-[var(--text-secondary)] font-medium mb-3">{metric.label}</p>
+            <h2 className="text-3xl font-bold tracking-tight">{metric.value}</h2>
+          </motion.div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        
-        {/* Main Left Content */}
-        <div className={(profileHealth || recentActivity) ? "xl:col-span-8 space-y-6" : "xl:col-span-12 space-y-6"}>
-          
-          {/* Earnings Profile Block */}
-          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-6 pb-6 border-b border-[var(--border)]">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 shrink-0">
-                  <img src={profile?.avatar_url || profile?.avatar || '/default-avatar.png'} alt="" className="w-full h-full object-cover" />
-                </div>
+      {/* Row 1: Chart & Add Funds */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        <div className="xl:col-span-8">
+          {/* Analytics Chart */}
+          {analytics.length > 0 ? (
+            <div className="glass-card border rounded-[2rem] p-6 md:p-8 h-full" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <div className="flex items-center gap-1.5">
-                    <h3 className="font-bold text-lg">{profile?.name || ''}</h3>
-                    {profile?.name && <CheckCircleIcon className="w-4 h-4 text-blue-500" />}
-                  </div>
-                  <p className="text-sm text-[var(--text-secondary)]">{profile?.user_email || ''}</p>
+                  <h3 className="font-semibold text-xl mb-1">Performance</h3>
+                  <p className="text-sm text-[var(--text-secondary)]">Your views and earnings over the last 7 days</p>
                 </div>
+                <select className="bg-transparent border border-[var(--border)] rounded-xl px-4 py-2 text-sm font-medium outline-none focus:border-[var(--accent-blue)] transition-colors">
+                  <option>Last 7 days</option>
+                  <option>Last 30 days</option>
+                </select>
               </div>
-              <button className="flex items-center gap-2 text-sm font-semibold border border-[var(--border)] bg-white hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">
-                View earnings <ArrowUpRightIcon className="w-3.5 h-3.5" />
+              <div className="h-[250px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={analytics} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--accent-blue)" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="var(--accent-blue)" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--accent-purple)" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="var(--accent-purple)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }}
+                      cursor={{ stroke: 'var(--border)', strokeWidth: 1, strokeDasharray: '4 4' }}
+                    />
+                    <Area type="monotone" dataKey="views" stroke="var(--accent-purple)" strokeWidth={3} fillOpacity={1} fill="url(#colorViews)" />
+                    <Area type="monotone" dataKey="earnings" stroke="var(--accent-blue)" strokeWidth={3} fillOpacity={1} fill="url(#colorEarnings)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          ) : (
+            <div className="glass-card border rounded-[2rem] p-6 md:p-8 h-full flex items-center justify-center text-[var(--text-muted)]" style={{ borderColor: 'var(--border)' }}>
+              No performance data available.
+            </div>
+          )}
+        </div>
+
+        {/* Add Funds */}
+        <div className="xl:col-span-4">
+          <div className="glass-card border rounded-[2rem] p-6 md:p-8 h-full flex flex-col relative overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-blue)] opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+            
+            <div className="flex-1">
+              <h3 className="font-semibold text-xl mb-1 text-[var(--text-primary)]">Add Funds</h3>
+              <p className="text-sm text-[var(--text-secondary)]">Top up your wallet to hire elite talent.</p>
+            </div>
+            
+            <div className="mt-auto pt-6">
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$100</button>
+                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--accent-blue)] border-[var(--accent-blue)] ring-1 ring-[var(--accent-blue)] shadow-[0_4px_12px_rgba(43,76,255,0.15)] transition-colors">$200</button>
+                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$300</button>
+                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$400</button>
+                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$500</button>
+                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$1,000</button>
+              </div>
+
+              <div className="relative mb-4">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-[var(--text-secondary)]">$</span>
+                <input 
+                  type="number" 
+                  placeholder="Custom amount" 
+                  className="w-full py-3.5 pl-8 pr-4 rounded-xl border bg-white font-semibold outline-none focus:border-[var(--accent-blue)] focus:ring-1 focus:ring-[var(--accent-blue)] transition-all text-[var(--text-primary)]"
+                  style={{ borderColor: 'var(--border)' }}
+                />
+              </div>
+              
+              <button className="w-full py-3.5 rounded-xl font-bold text-white hover:shadow-[0_8px_24px_rgba(43,76,255,0.25)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                style={{ backgroundColor: 'var(--accent-blue)' }}
+              >
+                 Deposit Funds <ArrowUpRightIcon className="w-4 h-4" />
               </button>
-            </div>
-            
-            <div className="flex items-center gap-2 mb-4 text-[var(--text-secondary)]">
-              <WalletIcon className="w-4 h-4" />
-              <span className="text-sm font-semibold">Earnings</span>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {dash?.stats?.last_30_days_earnings !== undefined && (
-                <div>
-                  <p className="text-xs text-[var(--text-secondary)] mb-1">Last 30 days</p>
-                  <p className="text-xl font-bold mb-1">${amount(dash.stats.last_30_days_earnings)}</p>
-                </div>
-              )}
-              {dash?.stats?.total_earnings !== undefined && (
-                <div>
-                  <p className="text-xs text-[var(--text-secondary)] mb-1">Total earning</p>
-                  <p className="text-xl font-bold mb-1">${amount(dash.stats.total_earnings)}</p>
-                </div>
-              )}
-              <div>
-                <p className="text-xs text-[var(--text-secondary)] mb-1">Wallet balance</p>
-                <p className="text-xl font-bold mb-1">${amount(dash?.stats?.wallet_balance) || '0.00'}</p>
-              </div>
-              {dash?.stats?.in_escrow !== undefined && (
-                <div>
-                  <p className="text-xs text-[var(--text-secondary)] mb-1">In escrow</p>
-                  <p className="text-xl font-bold mb-1">${amount(dash.stats.in_escrow)}</p>
-                </div>
-              )}
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Active Orders List */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold">Active orders</h2>
-              <button className="flex items-center gap-2 text-sm font-semibold border border-[var(--border)] bg-white hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">
-                View all orders <ArrowUpRightIcon className="w-3.5 h-3.5" />
-              </button>
+      {/* Row 2: Orders & Action Center */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        
+        {/* Active Orders */}
+        <div className="xl:col-span-8">
+          <div className="glass-card border rounded-[2rem] p-6 md:p-8" style={{ borderColor: 'var(--border)' }}>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-semibold">Active Orders</h2>
+              <button className="text-sm font-semibold text-[var(--accent-blue)] hover:underline">View All</button>
             </div>
             
-            <div className="flex items-center gap-2 mb-4">
-              <button className="px-4 py-1.5 text-xs font-semibold rounded-full border border-blue-200 text-blue-700 bg-blue-50 flex items-center gap-2">
-                Service <span className="bg-blue-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[9px]">{activeServices}</span>
-              </button>
-              <button className="px-4 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 flex items-center gap-2 transition-colors">
-                Jobs <span className="bg-gray-200 text-gray-700 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">{amount(dash?.counts?.jobs)}</span>
-              </button>
-            </div>
-            
-            <div className="space-y-3">
+            <div className="space-y-4">
               {recentOrders.length === 0 ? (
-                <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-8 text-center text-[var(--text-muted)] text-sm">
+                <div className="p-8 text-center text-[var(--text-muted)] text-sm rounded-2xl bg-black/50 border border-[var(--border)]">
                   No active orders at the moment.
                 </div>
               ) : (
                 recentOrders.map((order: any, idx: number) => (
-                  <div key={order.id || idx} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-3 flex items-center gap-4 hover:border-gray-300 transition-colors">
-                    <div className="w-32 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0 flex-none relative">
-                      <img src={order.thumbnail?.url || '/placeholder.png'} alt="" className="w-full h-full object-cover" />
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    key={order.id || idx} 
+                    className="group bg-white rounded-2xl p-5 flex flex-col gap-3 border transition-all hover:shadow-lg"
+                    style={{ borderColor: 'var(--border)' }}
+                  >
+                    {/* Top Row: Title & Status */}
+                    <div className="flex items-start justify-between gap-4">
+                      <h4 className="font-semibold text-lg line-clamp-1">
+                        {order.job?.title || order.service?.title || order.job_service_title || order.formatted_id || `Order #${order.id}`}
+                      </h4>
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-50 text-blue-600 border border-blue-200 shrink-0">
+                        {order.stage ? order.stage.replace(/_/g, ' ') : order.status || 'Active'}
+                      </span>
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-[15px] truncate mb-2">{order.job_service_title || `Order #${order.id}`}</h4>
-                      <div className="flex items-center gap-4 text-xs text-[var(--text-secondary)]">
-                        {order.location && <span className="flex items-center gap-1"><MapPinIcon className="w-3.5 h-3.5" /> {order.location}</span>}
-                        {order.due_date && <span className="flex items-center gap-1"><ClockIcon className="w-3.5 h-3.5" /> {order.due_date}</span>}
-                        <span className="font-semibold text-[var(--text-primary)]">${order.total || '0.00'}</span>
-                        {order.buyer_name && <span className="flex items-center gap-1"><UserIcon className="w-3.5 h-3.5" /> {order.buyer_name}</span>}
+                    {/* Bottom Row: Metadata & Price */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-[var(--text-secondary)] font-medium">
+                      <div className="flex flex-wrap items-center gap-4">
+                        {order.type && (
+                          <span className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg capitalize">
+                            <BriefcaseIcon className="w-4 h-4 text-gray-400" /> {order.type}
+                          </span>
+                        )}
+                        {order.started_at && (
+                          <span className="flex items-center gap-1.5"><ClockIcon className="w-4 h-4 text-gray-400" /> Start: {new Date(order.started_at).toLocaleDateString()}</span>
+                        )}
+                        {order.delivery_at && (
+                          <span className="flex items-center gap-1.5"><ClockIcon className="w-4 h-4 text-amber-500" /> Due: {new Date(order.delivery_at).toLocaleDateString()}</span>
+                        )}
                       </div>
+                      <span className="font-bold text-[var(--text-primary)] text-lg ml-auto">
+                        ${order.total || 0.00}
+                      </span>
                     </div>
-                    
-                    <div className="flex flex-col items-end gap-3 shrink-0">
-                      <span className="px-2.5 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-600 border border-blue-200 capitalize">{order.status || 'Active'}</span>
-                      <button className="w-8 h-8 rounded border border-[var(--border)] flex items-center justify-center hover:bg-gray-50 transition-colors">
-                        <ArrowUpRightIcon className="w-4 h-4 text-gray-500" />
-                      </button>
-                    </div>
-                  </div>
+                  </motion.div>
                 ))
               )}
             </div>
           </div>
-
         </div>
 
-        {/* Right Sidebar */}
-        {(profileHealth || (recentActivity && recentActivity.length > 0)) && (
-          <div className="xl:col-span-4 space-y-6">
+        {/* Sidebar: Action Center & Proposals */}
+        <div className="xl:col-span-4 space-y-8">
+          
+          {/* Action Center (Order Notifications) */}
+          <div className="glass-card border rounded-[2rem] p-6 relative overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-pink)] opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+            <h3 className="font-semibold text-lg mb-6 flex items-center">
+              Action Center
+            </h3>
             
-            {/* Profile Health */}
-            {profileHealth && (
-              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6">
-                <h3 className="font-bold mb-6">Profile health</h3>
-                
-                <div className="flex justify-center mb-8 relative">
-                  <div className="w-48 h-24 overflow-hidden relative">
-                    <div className="w-48 h-48 rounded-full border-[16px] border-gray-100 absolute top-0 border-b-transparent border-r-transparent transform -rotate-45"></div>
-                    {profileHealth.percentage > 0 && (
-                      <div 
-                        className="w-48 h-48 rounded-full border-[16px] border-purple-500 absolute top-0 border-b-transparent border-r-transparent transform -rotate-45"
-                        style={{ transform: `rotate(${-45 + (180 * (profileHealth.percentage / 100))}deg)` }}
-                      ></div>
-                    )}
-                  </div>
-                  <div className="absolute bottom-0 w-full text-center">
-                    <span className="block text-xl font-bold">{profileHealth.percentage || 0}%</span>
-                    <span className="text-[10px] text-[var(--text-secondary)] uppercase font-semibold tracking-wider">Completed</span>
-                  </div>
-                </div>
-                
-                {profileHealth.items && profileHealth.items.length > 0 ? (
-                  <div className="space-y-4 mb-6">
-                    {profileHealth.items.map((item: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
-                          <span className="text-[var(--text-secondary)]">{item.label}</span>
-                        </div>
-                        <span className="font-medium">{item.percentage}%</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center text-sm text-[var(--text-muted)] mb-6">
-                    Complete your profile to stand out.
-                  </div>
-                )}
-                
-                <button className="w-full py-2.5 flex items-center justify-center gap-2 text-sm font-semibold border border-[var(--border)] rounded-lg hover:bg-gray-50 transition-colors">
-                  Profile settings <ArrowUpRightIcon className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
-            
-            {/* Recent Order Activity */}
-            {recentActivity && recentActivity.length > 0 && (
-              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6">
-                <h3 className="font-bold mb-6">Recent order activity</h3>
-                
-                <div className="space-y-6">
-                  {recentActivity.map((activity: any, i: number) => (
-                    <div key={i} className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gray-200 shrink-0 overflow-hidden">
-                        <img src={activity.avatar || '/default-avatar.png'} alt="" className="w-full h-full object-cover" />
+            {orderNotifications.length > 0 ? (
+              <div className="space-y-4">
+                {orderNotifications.map((notif: any, i: number) => (
+                  <Link href={notif.link || '#'} key={notif.id || i} className="block p-4 rounded-2xl bg-white border hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>
+                    <div className="flex gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                        {notif.type === 'message' ? <ChatBubbleLeftEllipsisIcon className="w-5 h-5 text-[var(--accent-orange)]" /> : <BellAlertIcon className="w-5 h-5 text-[var(--accent-blue)]" />}
                       </div>
                       <div>
-                        <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed" dangerouslySetInnerHTML={{ __html: activity.content }} />
-                        <p className="text-[11px] text-gray-400 mt-1">{activity.date}</p>
+                        <p className="text-sm font-medium line-clamp-2 mb-1 text-[var(--text-primary)]" dangerouslySetInnerHTML={{ __html: notif.content || notif.title }} />
+                        <span className="text-xs font-semibold text-[var(--accent-blue)]">View details →</span>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </Link>
+                ))}
               </div>
+            ) : (
+              <p className="text-sm text-[var(--text-muted)] text-center py-8">You're all caught up!</p>
             )}
-
           </div>
-        )}
+
+          {/* Active Proposals */}
+          {activeProposals.length > 0 && (
+            <div className="glass-card border rounded-[2rem] p-6" style={{ borderColor: 'var(--border)' }}>
+              <h3 className="font-semibold text-lg mb-6 flex items-center gap-2">
+                <BriefcaseIcon className="w-5 h-5 text-[var(--accent-purple)]" /> Active Proposals
+              </h3>
+              <div className="space-y-4">
+                {activeProposals.map((prop: any, i: number) => (
+                  <div key={i} className="p-4 rounded-2xl bg-white border flex flex-col gap-2" style={{ borderColor: 'var(--border)' }}>
+                    <h4 className="font-semibold text-sm truncate">{prop.job_title}</h4>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-lg capitalize text-[var(--text-secondary)]">{prop.status}</span>
+                      <span className="font-bold text-sm">${prop.bid_amount}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="w-full mt-4 py-3 rounded-xl text-sm font-semibold bg-gray-50 hover:bg-gray-100 transition-colors">
+                View All Proposals
+              </button>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );

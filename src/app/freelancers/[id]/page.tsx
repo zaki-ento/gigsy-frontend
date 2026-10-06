@@ -39,7 +39,7 @@ export default function SingleFreelancer() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-white" style={{ background: 'var(--bg-primary)' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center text-black" style={{ background: 'var(--bg-primary)' }}>
         <h1 className="text-2xl font-bold mb-3">Profile not found</h1>
         <Link href="/freelancers" className="flex items-center gap-2" style={{ color: 'var(--accent-blue)' }}>
           <ArrowLeftIcon className="w-4 h-4" /> Back
@@ -63,7 +63,7 @@ export default function SingleFreelancer() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10">
-        <Link href="/freelancers" className="inline-flex items-center gap-2 text-sm font-medium mb-6 transition-colors hover:text-white" style={{ color: 'var(--text-secondary)' }}>
+        <Link href="/freelancers" className="inline-flex items-center gap-2 text-sm font-medium mb-6 transition-colors hover:text-black" style={{ color: 'var(--text-secondary)' }}>
           <ArrowLeftIcon className="w-4 h-4" /> Back to Talent
         </Link>
 
@@ -77,7 +77,7 @@ export default function SingleFreelancer() {
                   {profile.avatar ? (
                     <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-3xl font-black text-white" style={{ background: 'var(--bg-card-hover)' }}>
+                    <div className="w-full h-full flex items-center justify-center text-3xl font-black text-black" style={{ background: 'var(--bg-card-hover)' }}>
                       {profile.name?.charAt(0)}
                     </div>
                   )}
@@ -87,7 +87,7 @@ export default function SingleFreelancer() {
                 )}
               </div>
 
-              <h1 className="text-xl font-black text-white mb-1 flex items-center justify-center gap-1.5">
+              <h1 className="text-xl font-black text-black mb-1 flex items-center justify-center gap-1.5">
                 {profile.name}
                 {profile.verified && <CheckBadgeIcon className="w-5 h-5 text-blue-400" />}
               </h1>
@@ -129,7 +129,7 @@ export default function SingleFreelancer() {
             {/* Skills */}
             {profile.skills?.filter((s: any) => s?.name).length > 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card rounded-3xl p-6">
-                <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">Skills</h3>
+                <h3 className="text-sm font-bold text-black mb-4 uppercase tracking-wider">Skills</h3>
                 <div className="flex flex-wrap gap-2">
                   {profile.skills.filter((s: any) => s?.name).map((sk: any, i: number) => (
                     <span key={i} className="badge text-xs" style={{ background: 'rgba(79,110,247,0.1)', border: '1px solid rgba(79,110,247,0.2)', color: '#7d9bff' }}>
@@ -145,7 +145,7 @@ export default function SingleFreelancer() {
           <div className="lg:col-span-3 space-y-6">
             {/* About */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card rounded-3xl p-8">
-              <h2 className="text-xl font-bold text-white mb-6">About</h2>
+              <h2 className="text-xl font-bold text-black mb-6">About</h2>
               <div
                 className="prose prose-sm max-w-none leading-relaxed"
                 style={{ color: 'var(--text-secondary)' }}
@@ -156,7 +156,7 @@ export default function SingleFreelancer() {
             {/* Categories */}
             {profile.categories?.filter((c: any) => c?.name).length > 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-3xl p-8">
-                <h2 className="text-xl font-bold text-white mb-6">Specializations</h2>
+                <h2 className="text-xl font-bold text-black mb-6">Specializations</h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.categories.filter((c: any) => c?.name).map((c: any, i: number) => (
                     <span key={i} className="badge" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>

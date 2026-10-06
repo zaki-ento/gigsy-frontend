@@ -33,7 +33,7 @@ export default function EmployersFeed() {
               <BuildingOfficeIcon className="w-4 h-4" />
               Companies
             </div>
-            <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-black text-black mb-4 leading-tight">
               World-Class <span className="gradient-text-blue">Employers</span>
             </h1>
             <p className="text-lg max-w-xl mb-10" style={{ color: 'var(--text-secondary)' }}>
@@ -95,7 +95,7 @@ export default function EmployersFeed() {
                           <BuildingOfficeIcon className="w-8 h-8" style={{ color: 'var(--text-muted)' }} />
                         )}
                       </div>
-                      <h3 className="font-bold text-white mb-1 group-hover:text-amber-300 transition-colors flex items-center gap-1.5">
+                      <h3 className="font-bold text-black mb-1 group-hover:text-amber-300 transition-colors flex items-center gap-1.5">
                         {e.name}
                         {e.verified && <CheckBadgeIcon className="w-4 h-4 text-blue-400" />}
                       </h3>

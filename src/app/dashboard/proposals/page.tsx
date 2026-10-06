@@ -29,7 +29,7 @@ export default function ProposalsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-black text-white mb-2">Proposals</h1>
+        <h1 className="text-3xl font-black text-black mb-2">Proposals</h1>
         <p className="text-[var(--text-secondary)]">Manage your bids and job applications.</p>
       </div>
 
@@ -43,7 +43,7 @@ export default function ProposalsPage() {
         ) : proposals.length === 0 ? (
           <div className="p-16 text-center">
             <BriefcaseIcon className="w-16 h-16 mx-auto mb-4 text-[var(--text-muted)]" />
-            <h2 className="text-xl font-bold text-white mb-2">No proposals yet</h2>
+            <h2 className="text-xl font-bold text-black mb-2">No proposals yet</h2>
             <p className="text-[var(--text-secondary)] mb-6">You haven't submitted any proposals for jobs.</p>
             <Link href="/jobs" className="btn-primary inline-flex px-6 py-3 rounded-xl font-bold">
               <span className="relative z-10">Find Jobs</span>
@@ -58,16 +58,16 @@ export default function ProposalsPage() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="p-6 hover:bg-white/5 transition-colors flex flex-col md:flex-row gap-6 md:items-center justify-between group"
+                  className="p-6 hover:bg-black/5 transition-colors flex flex-col md:flex-row gap-6 md:items-center justify-between group"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-sm font-bold text-white">#{proposal.id}</span>
+                      <span className="text-sm font-bold text-black">#{proposal.id}</span>
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(proposal.status)}`}>
                         {proposal.status || 'Submitted'}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-white mb-1 group-hover:text-blue-300 transition-colors">
+                    <h3 className="font-semibold text-black mb-1 group-hover:text-blue-300 transition-colors">
                       {proposal.job_title || 'Job Application'}
                     </h3>
                     <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
@@ -79,10 +79,10 @@ export default function ProposalsPage() {
                   <div className="flex items-center justify-between md:justify-end gap-6 md:w-64 shrink-0">
                     <div className="text-right">
                       <div className="text-xs text-[var(--text-muted)] mb-1">Bid Amount</div>
-                      <div className="font-bold text-white" dangerouslySetInnerHTML={{ __html: proposal.amount_html || '$0' }} />
+                      <div className="font-bold text-black" dangerouslySetInnerHTML={{ __html: proposal.amount_html || '$0' }} />
                     </div>
-                    <button className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/10 group-hover:border-blue-500/30">
-                      <ArrowRightIcon className="w-4 h-4 text-white" />
+                    <button className="w-10 h-10 rounded-xl bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors border border-white/10 group-hover:border-blue-500/30">
+                      <ArrowRightIcon className="w-4 h-4 text-black" />
                     </button>
                   </div>
                 </motion.div>

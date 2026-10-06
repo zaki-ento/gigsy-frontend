@@ -75,8 +75,8 @@ export default function Navbar() {
                   href={link.href}
                   className={`flex items-center space-x-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     isActive(link.href)
-                      ? 'text-white bg-white/10'
-                      : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5'
+                      ? 'text-black bg-black/5'
+                      : 'text-[var(--text-secondary)] hover:text-black hover:bg-black/5'
                   }`}
                 >
                   <link.icon className="w-4 h-4" />
@@ -91,7 +91,7 @@ export default function Navbar() {
                 <>
                   <Link
                     href="/login"
-                    className="hidden md:block text-sm font-medium text-[var(--text-secondary)] hover:text-white transition-colors px-4 py-2"
+                    className="hidden md:block text-sm font-medium text-[var(--text-secondary)] hover:text-black transition-colors px-4 py-2"
                   >
                     Log In
                   </Link>
@@ -107,7 +107,7 @@ export default function Navbar() {
                   {/* Notifications */}
                   <Link
                     href="/dashboard/notifications"
-                    className="relative w-10 h-10 rounded-xl flex items-center justify-center text-[var(--text-secondary)] hover:text-white hover:bg-white/5 transition-all"
+                    className="relative w-10 h-10 rounded-xl flex items-center justify-center text-[var(--text-secondary)] hover:text-black hover:bg-black/5 transition-all"
                   >
                     <BellIcon className="w-5 h-5" />
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[var(--accent-pink)]"></span>
@@ -122,7 +122,7 @@ export default function Navbar() {
                       <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
                         <img src={profile?.avatar || '/default-avatar.png'} alt={profile?.name || ''} className="w-full h-full object-cover" />
                       </div>
-                      <span className="hidden md:block text-sm font-medium text-white max-w-[100px] truncate">
+                      <span className="hidden md:block text-sm font-medium text-black max-w-[100px] truncate">
                         {profile?.name?.split(' ')[0] || 'Account'}
                       </span>
                       <ChevronDownIcon className={`w-4 h-4 text-[var(--text-secondary)] transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
@@ -139,7 +139,7 @@ export default function Navbar() {
                           style={{ border: '1px solid var(--border)' }}
                         >
                           <div className="px-4 py-3 border-b border-white/5">
-                            <p className="text-sm font-semibold text-white truncate">{profile?.name}</p>
+                            <p className="text-sm font-semibold text-black truncate">{profile?.name}</p>
                             <p className="text-xs text-[var(--text-muted)] capitalize">{profile?.type || 'Member'}</p>
                           </div>
                           {[
@@ -149,7 +149,7 @@ export default function Navbar() {
                             <Link
                               key={item.href}
                               href={item.href}
-                              className="flex items-center space-x-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-white hover:bg-white/5 transition-all"
+                              className="flex items-center space-x-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-black hover:bg-black/5 transition-all"
                             >
                               <item.icon className="w-4 h-4" />
                               <span>{item.label}</span>
@@ -174,7 +174,7 @@ export default function Navbar() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center hover:bg-white/5 text-[var(--text-secondary)] hover:text-white transition-all"
+                className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center hover:bg-white/5 text-[var(--text-secondary)] hover:text-black transition-all"
               >
                 {menuOpen ? <XMarkIcon className="w-5 h-5" /> : <Bars3Icon className="w-5 h-5" />}
               </button>
@@ -202,8 +202,8 @@ export default function Navbar() {
                     href={link.href}
                     className={`flex items-center space-x-3 px-4 py-4 rounded-2xl text-base font-medium transition-all ${
                       isActive(link.href)
-                        ? 'text-white bg-white/10'
-                        : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5'
+                        ? 'text-black bg-black/5'
+                        : 'text-[var(--text-secondary)] hover:text-black hover:bg-black/5'
                     }`}
                   >
                     <link.icon className="w-5 h-5" />
@@ -215,7 +215,7 @@ export default function Navbar() {
               <div className="mt-auto space-y-3">
                 {!token ? (
                   <>
-                    <Link href="/login" className="block w-full py-4 text-center rounded-2xl text-white font-medium" style={{ border: '1px solid var(--border)' }}>
+                    <Link href="/login" className="block w-full py-4 text-center rounded-2xl text-black font-medium" style={{ border: '1px solid var(--border)' }}>
                       Log In
                     </Link>
                     <Link href="/register" className="btn-primary block w-full py-4 text-center rounded-2xl font-semibold">
