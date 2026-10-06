@@ -1,66 +1,54 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useWalletBalance, useDepositFunds, useWithdrawFunds } from '@/lib/gigneo/api/walletHooks';
+import { useQuery } from '@tanstack/react-query';
 import { fetchApi } from '@/lib/api';
 import { motion } from 'framer-motion';
-import { CurrencyDollarIcon, ArrowDownRightIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { CurrencyDollarIcon, ArrowDownRightIcon, DocumentTextIcon, ChartBarIcon, LockClosedIcon, WalletIcon } from '@heroicons/react/24/outline';
 
 export default function WalletPage() {
-  const [wallet, setWallet] = useState<any>(null);
-  const [invoices, setInvoices] = useState<any[]>([]);
-  const [payouts, setPayouts] = useState<any[]>([]);
-  const [withdrawals, setWithdrawals] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: wallet, isLoading: isWalletLoading } = useWalletBalance();
+  const { data: invoiceRes, isLoading: isInvoicesLoading } = useQuery({
+    queryKey: ['wallet-invoices'],
+    queryFn: () => fetchApi('/wallet/invoices').catch(() => ({ items: [] })),
+    staleTime: 30 * 1000,
+  });
+  const { data: payoutRes, isLoading: isPayoutsLoading } = useQuery({
+    queryKey: ['wallet-payouts'],
+    queryFn: () => fetchApi('/wallet/payouts').catch(() => ({ payouts: [] })),
+    staleTime: 30 * 1000,
+  });
+  const { data: withdrawalRes, isLoading: isWithdrawalsLoading } = useQuery({
+    queryKey: ['wallet-withdrawals'],
+    queryFn: () => fetchApi('/wallet/withdrawals').catch(() => ({ items: [] })),
+    staleTime: 30 * 1000,
+  });
+
+  const { mutateAsync: depositFunds, isPending: isDepositing } = useDepositFunds();
+  const { mutateAsync: withdrawFunds, isPending: isWithdrawing } = useWithdrawFunds();
+
+  const loading = isWalletLoading || isInvoicesLoading || isPayoutsLoading || isWithdrawalsLoading;
+  const invoices = invoiceRes?.items || [];
+  const payouts = payoutRes?.payouts || [];
+  const withdrawals = withdrawalRes?.items || [];
+  const firstPayoutId = payouts[0]?.id ? String(payouts[0].id) : '';
+
   const [depositAmount, setDepositAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [payoutId, setPayoutId] = useState('');
-  const [depositing, setDepositing] = useState(false);
-  const [withdrawing, setWithdrawing] = useState(false);
-
-  useEffect(() => {
-    fetchWallet();
-  }, []);
-
-  const fetchWallet = async () => {
-    setLoading(true);
-    try {
-      const res = await fetchApi('/wallet');
-      setWallet(res.wallet || res);
-      const [invoiceRes, payoutRes, withdrawalRes] = await Promise.all([
-        fetchApi('/wallet/invoices').catch(() => ({ items: [] })),
-        fetchApi('/wallet/payouts').catch(() => ({ payouts: [] })),
-        fetchApi('/wallet/withdrawals').catch(() => ({ items: [] })),
-      ]);
-      setInvoices(invoiceRes.items || []);
-      setPayouts(payoutRes.payouts || []);
-      setWithdrawals(withdrawalRes.items || []);
-      const firstPayout = (payoutRes.payouts || [])[0];
-      if (firstPayout?.id) setPayoutId(String(firstPayout.id));
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [payoutId, setPayoutId] = useState(firstPayoutId);
 
   const handleDeposit = async () => {
     if (!depositAmount || Number(depositAmount) <= 0) return;
-    setDepositing(true);
     try {
-      const res = await fetchApi('/wallet/deposit', {
-        method: 'POST',
-        body: JSON.stringify({ amount: Number(depositAmount) })
-      });
+      const res = await depositFunds({ amount: Number(depositAmount) });
       if (res.redirect) {
         window.location.href = res.redirect;
         return;
       }
       setDepositAmount('');
-      fetchWallet();
     } catch (e: any) {
       alert(e.message || 'Deposit failed');
-    } finally {
-      setDepositing(false);
     }
   };
 
@@ -90,22 +78,18 @@ export default function WalletPage() {
               ))}
             </select>
             <button
-              disabled={withdrawing || !withdrawAmount || !payoutId}
+              disabled={isWithdrawing || !withdrawAmount || (!payoutId && !firstPayoutId)}
               onClick={async () => {
-                setWithdrawing(true);
                 try {
-                  await fetchApi('/wallet/withdrawals', { method: 'POST', body: JSON.stringify({ amount: Number(withdrawAmount), payout_id: payoutId }) });
+                  await withdrawFunds({ amount: Number(withdrawAmount), payout_id: payoutId || firstPayoutId });
                   setWithdrawAmount('');
-                  fetchWallet();
                 } catch (e: any) {
                   alert(e.message || 'Withdrawal failed');
-                } finally {
-                  setWithdrawing(false);
                 }
               }}
               className="btn-primary px-5 py-3 rounded-xl text-sm font-bold flex items-center gap-2 disabled:opacity-50"
             >
-              <ArrowDownRightIcon className="w-5 h-5" /> {withdrawing ? 'Sending…' : 'Withdraw'}
+              <ArrowDownRightIcon className="w-5 h-5" /> {isWithdrawing ? 'Sending…' : 'Withdraw'}
             </button>
           </div>
         </motion.div>
@@ -127,12 +111,57 @@ export default function WalletPage() {
             </div>
             <button
               onClick={handleDeposit}
-              disabled={depositing || !depositAmount}
+              disabled={isDepositing || !depositAmount}
               className="btn-primary w-full py-3.5 rounded-xl text-sm font-bold disabled:opacity-50"
             >
-              <span className="relative z-10">{depositing ? 'Processing...' : 'Deposit via Stripe'}</span>
+              <span className="relative z-10">{isDepositing ? 'Processing...' : 'Deposit via Stripe'}</span>
             </button>
           </div>
+        </motion.div>
+      </div>
+
+      {/* Wallet Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="glass-card rounded-3xl p-6 relative overflow-hidden">
+          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-[var(--accent-orange)] opacity-10 rounded-full blur-2xl"></div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+              <LockClosedIcon className="w-5 h-5 text-[var(--accent-orange)]" />
+            </div>
+            <h3 className="font-semibold text-black">Escrow Balance</h3>
+          </div>
+          <p className="text-3xl font-black text-black">
+             {loading ? '...' : `$${(wallet?.stats?.escrow_balance?.lifetime || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`}
+          </p>
+          <p className="text-sm text-[var(--text-secondary)] mt-2">Currently in active orders</p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-3xl p-6 relative overflow-hidden">
+          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-green-500 opacity-10 rounded-full blur-2xl"></div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+              <ChartBarIcon className="w-5 h-5 text-green-600" />
+            </div>
+            <h3 className="font-semibold text-black">Total Earnings</h3>
+          </div>
+          <p className="text-3xl font-black text-black">
+             {loading ? '...' : `$${(wallet?.stats?.total_earning?.lifetime || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`}
+          </p>
+          <p className="text-sm text-[var(--text-secondary)] mt-2">Lifetime earnings</p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="glass-card rounded-3xl p-6 relative overflow-hidden">
+          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-[var(--accent-blue)] opacity-10 rounded-full blur-2xl"></div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+              <WalletIcon className="w-5 h-5 text-[var(--accent-blue)]" />
+            </div>
+            <h3 className="font-semibold text-black">Total Spent</h3>
+          </div>
+          <p className="text-3xl font-black text-black">
+             {loading ? '...' : `$${(wallet?.stats?.total_spending?.lifetime || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`}
+          </p>
+          <p className="text-sm text-[var(--text-secondary)] mt-2">Lifetime spending</p>
         </motion.div>
       </div>
 

@@ -2,34 +2,73 @@
 
 import { useAuth } from '@/context/AuthContext';
 import { fetchApi } from '@/lib/api';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import {
   BriefcaseIcon, ShoppingBagIcon, WalletIcon, ArrowUpRightIcon, CheckCircleIcon,
   MapPinIcon, ClockIcon, UserIcon, BellAlertIcon, ChatBubbleLeftEllipsisIcon
 } from '@heroicons/react/24/outline';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
+import { DashboardSkeleton } from '@/components/Skeletons';
 
 export default function DashboardOverview() {
   const { profile } = useAuth();
-  const [stats, setStats] = useState<any>(null);
-  const [orderNotifications, setOrderNotifications] = useState<any[]>([]);
+  
   const [loading, setLoading] = useState(true);
+  const [statsData, setStatsData] = useState<any>(null);
+  const [walletData, setWalletData] = useState<any>(null);
+  const [ordersData, setOrdersData] = useState<any>(null);
+  const [notifsData, setNotifsData] = useState<any>(null);
+  
+  const [isDepositing, setIsDepositing] = useState(false);
+  const [customDeposit, setCustomDeposit] = useState('');
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [statsRes, walletRes, ordersRes, notifsRes] = await Promise.all([
+        fetchApi('/dashboard').catch(() => null),
+        fetchApi('/wallet').catch(() => null),
+        fetchApi('/orders?status=active&per_page=5').catch(() => null),
+        fetchApi('/notifications?per_page=5').catch(() => null)
+      ]);
+      setStatsData(statsRes);
+      setWalletData(walletRes);
+      setOrdersData(ordersRes);
+      setNotifsData(notifsRes);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    Promise.all([
-      fetchApi('/dashboard'),
-      fetchApi('/notifications?category=order&per_page=05')
-    ])
-      .then(([dashRes, notifsRes]) => {
-        setStats(dashRes);
-        setOrderNotifications(notifsRes?.items || notifsRes?.data?.items || []);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    loadData();
   }, []);
 
+  const handleDeposit = async (amount: number) => {
+    if (!amount || amount <= 0) return;
+    setIsDepositing(true);
+    try {
+      const res = await fetchApi('/wallet/deposit', {
+        method: 'POST',
+        body: JSON.stringify({ amount })
+      });
+      if (res.redirect) window.location.href = res.redirect;
+      else loadData();
+    } catch (e: any) {
+      alert(e.message || 'Deposit failed');
+    } finally {
+      setIsDepositing(false);
+    }
+  };
+
+  const stats = statsData || {};
+  const orderNotifications = (notifsData?.items || notifsData?.data?.items || []).slice(0, 5);
+  const recentOrders = ordersData?.items || statsData?.recent_orders || [];
+  
   const dash = stats?.dashboard || stats || {};
   const amount = (value: any) => {
     if (value == null) return '0';
@@ -40,27 +79,27 @@ export default function DashboardOverview() {
 
   const activeServices = amount(dash?.counts?.services);
   const activeOrders = amount(dash?.stats?.active_orders_count);
-  const recentOrders = dash?.recent_orders || [];
   
   // New API Data
   const analytics = dash?.analytics || [];
   const actionRequired = dash?.action_required || [];
   const activeProposals = dash?.active_proposals || [];
   const missingSteps = dash?.profile_missing_steps || [];
-  const wallet = dash?.wallet_breakdown || {};
+  const wallet = walletData?.wallet || walletData || dash?.wallet_breakdown || {};
   const profileHealth = dash?.profile_health || { percentage: 0 };
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--accent-blue)' }}></div>
+      <div className="max-w-[1400px] mx-auto">
+        <DashboardSkeleton />
       </div>
     );
   }
 
   const radius = 56;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (profileHealth.percentage / 100) * circumference;
+  const percentage = profileHealth?.percentage || 0;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
     <div className="space-y-8 max-w-[1400px] mx-auto text-[var(--text-primary)]">
@@ -100,7 +139,7 @@ export default function DashboardOverview() {
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Welcome back, {profile?.name?.split(' ')[0]}</h1>
           <p className="text-[var(--text-secondary)] mb-6 text-lg max-w-2xl">
-            {profileHealth.percentage === 100 
+            {percentage === 100 
               ? "Your profile is fully optimized and looking great!" 
               : "Let's complete your profile to unlock your full earning potential."}
           </p>
@@ -123,10 +162,10 @@ export default function DashboardOverview() {
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Available Balance', value: `$${wallet.available || '0.00'}`, color: 'var(--accent-blue)' },
-          { label: 'Pending Clearance', value: `$${wallet.pending_clearance || '0.00'}`, color: 'var(--accent-orange)' },
-          { label: 'Active Escrow', value: `$${wallet.active_escrow || '0.00'}`, color: 'var(--accent-teal)' },
-          { label: 'Total Earnings', value: `$${wallet.withdrawn_total || '0.00'}`, color: 'var(--accent-purple)' },
+          { label: 'Available Balance', value: wallet.balance_html || `$${wallet.available || '0.00'}`, color: 'var(--accent-blue)' },
+          { label: 'Pending Clearance', value: `$${wallet.pending_clearance || wallet.pending || '0.00'}`, color: 'var(--accent-orange)' },
+          { label: 'Active Escrow', value: `$${wallet.active_escrow || wallet?.stats?.escrow_balance?.lifetime || '0.00'}`, color: 'var(--accent-teal)' },
+          { label: 'Total Earnings', value: `$${wallet.withdrawn_total || wallet?.stats?.total_earning?.lifetime || '0.00'}`, color: 'var(--accent-purple)' },
         ].map((metric, i) => (
           <motion.div 
             key={i}
@@ -138,7 +177,7 @@ export default function DashboardOverview() {
             style={{ borderColor: 'var(--border)', boxShadow: '0 8px 32px rgba(5,0,26,0.03)' }}
           >
             <p className="text-sm text-[var(--text-secondary)] font-medium mb-3">{metric.label}</p>
-            <h2 className="text-3xl font-bold tracking-tight">{metric.value}</h2>
+            <h2 className="text-3xl font-bold tracking-tight" dangerouslySetInnerHTML={{ __html: metric.value }}></h2>
           </motion.div>
         ))}
       </div>
@@ -203,28 +242,38 @@ export default function DashboardOverview() {
             
             <div className="mt-auto pt-6">
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$100</button>
-                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--accent-blue)] border-[var(--accent-blue)] ring-1 ring-[var(--accent-blue)] shadow-[0_4px_12px_rgba(43,76,255,0.15)] transition-colors">$200</button>
-                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$300</button>
-                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$400</button>
-                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$500</button>
-                <button className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] transition-colors" style={{ borderColor: 'var(--border)' }}>$1,000</button>
+                {[100, 200, 300, 400, 500, 1000].map(amt => (
+                  <button 
+                    key={amt}
+                    onClick={() => handleDeposit(amt)}
+                    disabled={isDepositing}
+                    className="py-2 rounded-xl border bg-white text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)] disabled:opacity-50 transition-colors" 
+                    style={{ borderColor: 'var(--border)' }}
+                  >
+                    ${amt}
+                  </button>
+                ))}
               </div>
 
               <div className="relative mb-4">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-[var(--text-secondary)]">$</span>
                 <input 
                   type="number" 
+                  value={customDeposit}
+                  onChange={(e) => setCustomDeposit(e.target.value)}
                   placeholder="Custom amount" 
                   className="w-full py-3.5 pl-8 pr-4 rounded-xl border bg-white font-semibold outline-none focus:border-[var(--accent-blue)] focus:ring-1 focus:ring-[var(--accent-blue)] transition-all text-[var(--text-primary)]"
                   style={{ borderColor: 'var(--border)' }}
                 />
               </div>
               
-              <button className="w-full py-3.5 rounded-xl font-bold text-white hover:shadow-[0_8px_24px_rgba(43,76,255,0.25)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+              <button 
+                onClick={() => handleDeposit(Number(customDeposit))}
+                disabled={isDepositing || !customDeposit}
+                className="w-full py-3.5 rounded-xl font-bold text-white hover:shadow-[0_8px_24px_rgba(43,76,255,0.25)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 style={{ backgroundColor: 'var(--accent-blue)' }}
               >
-                 Deposit Funds <ArrowUpRightIcon className="w-4 h-4" />
+                 {isDepositing ? 'Processing...' : 'Deposit Funds'} <ArrowUpRightIcon className="w-4 h-4" />
               </button>
             </div>
           </div>
