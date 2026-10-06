@@ -83,13 +83,8 @@ export default function RegisterPage() {
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center btn-primary">
-              <SparklesIcon className="w-6 h-6 text-white relative z-10" />
-            </div>
-            <span className="text-2xl font-black tracking-tight">
-              Gig<span className="gradient-text-blue">neo</span>
-            </span>
+          <Link href="/" className="inline-flex items-center justify-center">
+            <img src="/logo-dark.png" alt="Gigneo" className="h-10 w-auto object-contain" />
           </Link>
           <div className="mt-6">
             <h1 className="text-3xl font-black text-white mb-2">Join Gigneo</h1>

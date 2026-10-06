@@ -58,13 +58,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="glass-card rounded-3xl p-6 sticky top-24 border border-white/5">
               <div className="flex items-center gap-4 mb-8 pb-8 border-b border-white/5">
                 <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
-                  {profile?.avatar ? (
-                    <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="font-bold text-white text-lg">
-                      {profile?.name?.charAt(0) || 'U'}
-                    </span>
-                  )}
+                  <img src={profile?.avatar || '/default-avatar.png'} alt={profile?.name || ''} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-white font-bold truncate text-sm">{profile?.name || 'Loading...'}</h3>

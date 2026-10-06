@@ -63,13 +63,8 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[72px] py-4">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2 shrink-0">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center btn-primary">
-                <SparklesIcon className="w-5 h-5 text-white relative z-10" />
-              </div>
-              <span className="text-lg font-bold tracking-tight">
-                Gig<span className="gradient-text-blue">neo</span>
-              </span>
+            <Link href="/" className="flex items-center shrink-0">
+              <img src="/logo-dark.png" alt="Gigneo" className="h-8 w-auto object-contain" />
             </Link>
 
             {/* Desktop Nav */}
@@ -125,13 +120,7 @@ export default function Navbar() {
                       className="flex items-center space-x-2 rounded-xl px-3 py-2 hover:bg-white/5 transition-all"
                     >
                       <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
-                        {profile?.avatar ? (
-                          <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-sm font-bold text-white">
-                            {profile?.name?.charAt(0) || 'U'}
-                          </span>
-                        )}
+                        <img src={profile?.avatar || '/default-avatar.png'} alt={profile?.name || ''} className="w-full h-full object-cover" />
                       </div>
                       <span className="hidden md:block text-sm font-medium text-white max-w-[100px] truncate">
                         {profile?.name?.split(' ')[0] || 'Account'}

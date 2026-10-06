@@ -31,11 +31,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center space-x-2 mb-5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center btn-primary">
-                <SparklesIcon className="w-5 h-5 text-white relative z-10" />
-              </div>
-              <span className="text-lg font-bold">Gig<span className="gradient-text-blue">neo</span></span>
+            <Link href="/" className="inline-flex items-center mb-5">
+              <img src="/logo-dark.png" alt="Gigneo" className="h-8 w-auto object-contain" />
             </Link>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               The premium marketplace where world-class talent meets visionary companies.

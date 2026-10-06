@@ -436,19 +436,19 @@ export default function HomePage() {
               {
                 name: 'Sarah Chen',
                 role: 'Founder, FlowAI',
-                avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&fit=crop&auto=format',
+                avatar: '/placeholder.png',
                 quote: 'Gigneo helped us build our entire product team in just two weeks. The quality of talent is unmatched anywhere else.'
               },
               {
                 name: 'Marcus Williams',
                 role: 'CTO, NovaTech',
-                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&fit=crop&auto=format',
+                avatar: '/placeholder.png',
                 quote: 'As a freelancer, Gigneo gives me access to the best clients in the world. My income has tripled since joining.'
               },
               {
                 name: 'Elena Vasquez',
                 role: 'Creative Director',
-                avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&fit=crop&auto=format',
+                avatar: '/placeholder.png',
                 quote: 'The platform is beautiful, the payments are instant, and the support team is always there. 10/10 recommend.'
               },
             ].map((t, idx) => (

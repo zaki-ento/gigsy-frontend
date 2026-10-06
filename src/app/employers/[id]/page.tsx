@@ -70,11 +70,7 @@ export default function SingleEmployer() {
           
           <div className="px-8 md:px-12 pb-12 flex flex-col sm:flex-row items-center sm:items-start -mt-16 relative z-10">
             <div className="w-32 h-32 rounded-2xl border-4 border-slate-800 bg-slate-900 shadow-2xl overflow-hidden flex items-center justify-center shrink-0">
-              {profile.avatar ? (
-                <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
-              ) : (
-                <BuildingOfficeIcon className="w-12 h-12 text-slate-500" />
-              )}
+              <img src={profile.avatar || '/default-avatar.png'} alt="" className="w-full h-full object-cover" />
             </div>
             
             <div className="text-center sm:text-left sm:ml-8 mt-6 sm:mt-20 flex-1">

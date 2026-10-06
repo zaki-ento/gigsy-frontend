@@ -119,12 +119,8 @@ export default function DashboardOverview() {
           <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6 pb-6 border-b border-[var(--border)]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-                  {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-gray-500 font-bold">{profile?.name?.charAt(0) || 'U'}</span>
-                  )}
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 shrink-0">
+                  <img src={profile?.avatar_url || profile?.avatar || '/default-avatar.png'} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
@@ -196,11 +192,9 @@ export default function DashboardOverview() {
               ) : (
                 recentOrders.map((order: any, idx: number) => (
                   <div key={order.id || idx} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-3 flex items-center gap-4 hover:border-gray-300 transition-colors">
-                    {order.thumbnail?.url && (
-                      <div className="w-32 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0 flex-none relative">
-                        <img src={order.thumbnail.url} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    )}
+                    <div className="w-32 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0 flex-none relative">
+                      <img src={order.thumbnail?.url || '/placeholder.png'} alt="" className="w-full h-full object-cover" />
+                    </div>
                     
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-[15px] truncate mb-2">{order.job_service_title || `Order #${order.id}`}</h4>
@@ -283,8 +277,8 @@ export default function DashboardOverview() {
                 <div className="space-y-6">
                   {recentActivity.map((activity: any, i: number) => (
                     <div key={i} className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gray-200 shrink-0 overflow-hidden flex items-center justify-center text-xs font-bold text-gray-500">
-                        {activity.avatar ? <img src={activity.avatar} alt="" className="w-full h-full object-cover" /> : activity.initials || 'U'}
+                      <div className="w-8 h-8 rounded-full bg-gray-200 shrink-0 overflow-hidden">
+                        <img src={activity.avatar || '/default-avatar.png'} alt="" className="w-full h-full object-cover" />
                       </div>
                       <div>
                         <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed" dangerouslySetInnerHTML={{ __html: activity.content }} />
